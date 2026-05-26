@@ -382,6 +382,38 @@
     .tool-step select {
       padding: 0.58rem 0.65rem;
     }
+    .refine-list {
+      display: grid;
+      gap: 0.75rem;
+      max-height: 560px;
+      overflow: auto;
+      padding-right: 0.2rem;
+    }
+    .refine-card {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: rgba(255, 253, 248, 0.78);
+      padding: 0.85rem;
+    }
+    .refine-card h3 {
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+      font-size: 0.95rem;
+      margin-bottom: 0.35rem;
+    }
+    .refine-card .form-grid {
+      gap: 0.55rem;
+      margin: 0.65rem 0 0;
+    }
+    .refine-card label {
+      font-size: 0.68rem;
+      margin-bottom: 0.22rem;
+    }
+    .refine-card input,
+    .refine-card select {
+      padding: 0.56rem 0.65rem;
+    }
     .submission-status {
       display: none;
       margin-top: 0.8rem;
@@ -1125,12 +1157,10 @@
       };
     }
 
-    function addKnownToolFromForm(event) {
-      event.preventDefault();
-      const data = new FormData(event.currentTarget);
-      const catalogId = data.get("catalogId");
+    function addKnownTool(catalogId, overrides = {}) {
       const catalog = catalogById[catalogId];
       if (!catalog || state.tools.some((tool) => tool.catalogId === catalogId)) return;
+      const predicted = predictTool(catalogId);
       const tool = {
         catalogId,
         isCustom: false,
@@ -1138,17 +1168,30 @@
         name: catalog.name,
         category: catalog.category,
         logoPath: catalog.logoPath,
-        team: data.get("team"),
-        cost: Number(data.get("cost") || 0),
-        seats: Number(data.get("seats") || 0),
-        integrations: Number(data.get("integrations") || 0),
-        usage: data.get("usage") || catalog.defaultUse,
-        criticality: data.get("criticality") || "Medium"
+        team: overrides.team || predicted.team,
+        cost: Number(overrides.cost ?? predicted.cost ?? 0),
+        seats: Number(overrides.seats ?? predicted.seats ?? 0),
+        integrations: Number(overrides.integrations ?? predicted.integrations ?? 0),
+        usage: overrides.usage || predicted.usage || catalog.defaultUse,
+        criticality: overrides.criticality || predicted.criticality || "Medium"
       };
       state.tools.push(tool);
       if (!state.teams.includes(tool.team)) state.teams.push(tool.team);
       state.ui.selectedCatalogId = "";
       render();
+    }
+
+    function addKnownToolFromForm(event) {
+      event.preventDefault();
+      const data = new FormData(event.currentTarget);
+      addKnownTool(data.get("catalogId"), {
+        team: data.get("team"),
+        cost: data.get("cost"),
+        seats: data.get("seats"),
+        integrations: data.get("integrations"),
+        usage: data.get("usage"),
+        criticality: data.get("criticality")
+      });
     }
 
     function addCustomToolFromForm(event) {
@@ -1172,6 +1215,28 @@
       state.tools.push(tool);
       if (!state.teams.includes(tool.team)) state.teams.push(tool.team);
       state.ui.customOpen = false;
+      render();
+    }
+
+    function updateToolFromForm(event) {
+      event.preventDefault();
+      const data = new FormData(event.currentTarget);
+      const index = Number(data.get("index"));
+      const tool = state.tools[index];
+      if (!tool) return;
+      tool.team = data.get("team") || tool.team;
+      tool.usage = data.get("usage") || tool.usage;
+      tool.cost = Number(data.get("cost") || 0);
+      tool.seats = Number(data.get("seats") || 0);
+      tool.integrations = Number(data.get("integrations") || 0);
+      tool.criticality = data.get("criticality") || tool.criticality;
+      tool.source = "edited";
+      if (!state.teams.includes(tool.team)) state.teams.push(tool.team);
+      render();
+    }
+
+    function removeTool(index) {
+      state.tools.splice(index, 1);
       render();
     }
 
@@ -1242,7 +1307,7 @@
       const tiles = filteredCatalog().map((tool) => {
         const already = selected.some((item) => item.catalogId === tool.id);
         const predicted = predictTool(tool.id);
-        return `<button class="tool-tile ${state.ui.selectedCatalogId === tool.id ? "active" : ""}" type="button" data-select-tool="${tool.id}" ${already ? "disabled" : ""}>
+        return `<button class="tool-tile ${already ? "active" : ""}" type="button" data-quick-add-tool="${tool.id}" ${already ? "disabled" : ""}>
           ${logoMarkup(tool)}
           <span><strong>${escapeHtml(tool.name)}</strong><span>${escapeHtml(tool.category)} · est. ${money(predicted.cost)}/mo</span><span>${already ? "Already mapped" : `Likely owner: ${escapeHtml(predicted.team)}`}</span></span>
         </button>`;
@@ -1266,12 +1331,46 @@
             <div class="catalog-side">
               <div>
                 <label>Mapped tools</label>
-                <div class="selected-stack">${selected.length ? selected.map((tool) => `<span class="selected-pill">${tool.logoPath ? `<img src="${tool.logoPath}" alt="" style="width:18px;height:18px;border-radius:5px">` : ""}${escapeHtml(tool.name)}</span>`).join("") : `<span class="quiet">Pick known tools first. Details appear here without scrolling.</span>`}</div>
+                <div class="selected-stack">${selected.length ? selected.map((tool) => `<span class="selected-pill">${tool.logoPath ? `<img src="${tool.logoPath}" alt="" style="width:18px;height:18px;border-radius:5px">` : ""}${escapeHtml(tool.name)}</span>`).join("") : `<span class="quiet">Click tools to add them to the ecosystem instantly.</span>`}</div>
               </div>
-              ${state.ui.selectedCatalogId ? knownToolDetailMarkup(state.ui.selectedCatalogId) : state.ui.customOpen ? customToolMarkup() : `<div class="empty-detail"><strong>Select a tool tile</strong><span>We will predict the owner team, seats, cost, integrations, and usage from company size. You can edit every estimate before adding it.</span><button class="button secondary" type="button" id="sampleTools">Load sample tools</button></div>`}
+              ${state.ui.customOpen ? customToolMarkup() : `<div class="empty-detail"><strong>Build the map first</strong><span>Click a tool once to add it with estimated owner, cost, seats, integrations, and usage. Refine the details on the next step.</span><button class="button secondary" type="button" id="sampleTools">Load sample tools</button></div>`}
             </div>
           </div>
         </div>`;
+    }
+
+    function refineToolsMarkup() {
+      if (!state.tools.length) {
+        return `<div class="callout">No tools mapped yet. Go back one step and click the known tools your team uses. Estimates are editable after they are on the map.</div>`;
+      }
+      const cards = state.tools.map((tool, index) => {
+        const catalog = tool.catalogId ? catalogById[tool.catalogId] : null;
+        const uses = [...new Set([tool.usage, catalog?.defaultUse, ...(catalog?.commonWorkflows || []), ...usageOptions].filter(Boolean))];
+        return `<div class="refine-card">
+          <h3>${logoMarkup(tool, "node-logo")} ${escapeHtml(tool.name)}</h3>
+          <p class="form-note">Estimated. Leave anything fuzzy as "Don't know" and DeSaaS will verify it.</p>
+          <form class="form-grid refineToolForm">
+            <input type="hidden" name="index" value="${index}">
+            <div class="split">
+              <div><label>Estimated owner team</label><select name="team">${teamSelectMarkup(tool.team)}</select></div>
+              <div><label>Estimated use</label><select name="usage">${uses.map((item) => `<option ${item === tool.usage ? "selected" : ""}>${escapeHtml(item)}</option>`).join("")}</select></div>
+            </div>
+            <div class="split">
+              <div><label>Estimated monthly cost</label><input name="cost" type="number" min="0" value="${Number(tool.cost || 0)}"></div>
+              <div><label>Estimated seats/users</label><input name="seats" type="number" min="0" value="${Number(tool.seats || 0)}"></div>
+            </div>
+            <div class="split">
+              <div><label>Estimated integrations</label><input name="integrations" type="number" min="0" value="${Number(tool.integrations || 0)}"></div>
+              <div><label>Criticality</label><select name="criticality">${["Unknown", "Low", "Medium", "High"].map((item) => `<option ${item === tool.criticality ? "selected" : ""}>${item}</option>`).join("")}</select></div>
+            </div>
+            <div class="split">
+              <button class="button primary" type="submit">Save estimate</button>
+              <button class="button secondary" type="button" data-remove-tool="${index}">Remove</button>
+            </div>
+          </form>
+        </div>`;
+      }).join("");
+      return `<div class="refine-list">${cards}</div>`;
     }
 
     function teamSelectMarkup(selected) {
@@ -1308,25 +1407,21 @@
     function customToolMarkup() {
       return `<div class="tool-detail">
         <h3>Other / uncommon tool</h3>
-        <p class="form-note">Custom tools are included in the proposal and flagged for DeSaaS verification.</p>
+        <p class="form-note">Add it to the map now. Details can be refined on the next step and will be flagged for DeSaaS verification.</p>
         <form id="customToolForm" class="form-grid">
           <div><label>Tool name</label><input required name="name" placeholder="Uncommon SaaS tool"></div>
-          <div class="split">
-            <div><label>Likely owner team</label><select name="team">${teamSelectMarkup(state.teams[0] || "Operations")}</select></div>
-            <div><label>Main use</label><select name="usage">${usageOptions.map((item) => `<option>${escapeHtml(item)}</option>`).join("")}</select></div>
-          </div>
-          <div class="split">
-            <div><label>Estimated monthly cost</label><input name="cost" type="number" min="0" placeholder="1200"></div>
-            <div><label>Estimated seats/users</label><input name="seats" type="number" min="0" placeholder="25"></div>
-          </div>
-          <div><label>Estimated integrations</label><input name="integrations" type="number" min="0" placeholder="3"></div>
-          <button class="button primary" type="submit">Add custom tool for verification</button>
+          <div><label>Likely owner team</label><select name="team">${teamSelectMarkup(state.teams[0] || "Operations")}</select></div>
+          <input type="hidden" name="usage" value="Don't know">
+          <input type="hidden" name="cost" value="0">
+          <input type="hidden" name="seats" value="0">
+          <input type="hidden" name="integrations" value="0">
+          <button class="button primary" type="submit">Add custom tool to map</button>
         </form>
       </div>`;
     }
 
-    function stepMarkup() {
-      const steps = [
+    function auditSteps() {
+      return [
         { title: "What metrics matter most?", copy: "Pick the outcomes leadership already cares about. These become the first manager dashboard widgets.", body: chipList("metrics", metricOptions) },
         {
           title: "How big is the company?",
@@ -1335,22 +1430,31 @@
             <div><label>Industry, optional</label><select id="industrySelect">${industryOptions.map((item) => `<option ${state.company.industry === item ? "selected" : ""}>${item}</option>`).join("")}</select></div>`
         },
         { title: "Which teams use the most software?", copy: "Choose the teams or functions where SaaS has become part of the operating system.", body: chipList("teams", teamOptions) + `<div class="split"><input id="customTeam" placeholder="Add another team"><button class="button secondary" type="button" id="addTeam">Add team</button></div>` },
-        { title: "Pick known SaaS tools first", copy: "Search the top 100 common SMB tools. Use Other only when the tool is not listed.", body: toolPickerMarkup() },
+        { title: "Build the ecosystem fast", copy: "Click the known SaaS tools your teams use. DeSaaS adds estimated details automatically so you can keep moving.", body: toolPickerMarkup() },
+        { title: "Refine the estimated tool details", copy: "Now clean up the assumptions you know. Unknowns are fine and become verification tasks.", body: refineToolsMarkup() },
         { title: "What does management need to see?", copy: "Select the reporting outputs your simplified system should make easier to trust.", body: chipList("reports", reportOptions) },
         { title: "Review the estimated proposal", copy: "This draft is intentionally marked estimated. DeSaaS verifies invoices, usage, contracts, workflows, and reporting needs before it becomes management-ready.", body: `<div class="callout">Unknown usage does not block the proposal. It creates a verification list and usually points to quick savings.</div><div class="actions"><a class="button secondary" href="${estimatorUrl()}">Open 12-month conversion plan</a></div>` },
         { title: "Submit to DeSaaS for verification", copy: "Do not show the shareholders yet. Send the draft to DeSaaS so the numbers and recommendations can be checked before leadership sees it.", body: `<form id="verifyForm" class="form-grid"><div><label>Work email</label><input required name="email" type="email" placeholder="you@company.com" value="${escapeHtml(state.contact.email)}"></div><div><label>Company website</label><input required name="website" placeholder="https://company.com" value="${escapeHtml(state.contact.website)}"></div><div><label>Name, optional</label><input name="name" placeholder="Your name" value="${escapeHtml(state.contact.name)}"></div><button class="button primary" type="submit">Submit draft for verification</button></form><div class="submission-status ${state.submission.message ? "visible" : ""}">${escapeHtml(state.submission.message)}</div>` }
       ];
+    }
+
+    function stepMarkup() {
+      const steps = auditSteps();
+      const finalStepIndex = steps.length - 1;
+      state.step = Math.max(0, Math.min(finalStepIndex, state.step));
       const step = steps[state.step];
-      return `<h2 class="step-title">${step.title}</h2><p class="step-copy">${step.copy}</p>${step.body}<div class="actions"><button class="button secondary" type="button" id="prevStep" onclick="advanceStep(-1)" ${state.step === 0 ? "disabled" : ""}>Back</button><span class="quiet">Step ${state.step + 1} of ${steps.length}</span><button class="button primary" type="button" id="nextStep" onclick="advanceStep(1)" ${state.step === steps.length - 1 ? "disabled" : ""}>Next</button></div>`;
+      return `<h2 class="step-title">${step.title}</h2><p class="step-copy">${step.copy}</p>${step.body}<div class="actions"><button class="button secondary" type="button" id="prevStep" onclick="advanceStep(-1)" ${state.step === 0 ? "disabled" : ""}>Back</button><span class="quiet">Step ${state.step + 1} of ${steps.length}</span><button class="button primary" type="button" id="nextStep" onclick="advanceStep(1)" ${state.step === finalStepIndex ? "disabled" : ""}>Next</button></div>`;
     }
 
     function advanceStep(delta) {
-      state.step = Math.max(0, Math.min(6, state.step + delta));
+      state.step = Math.max(0, Math.min(auditSteps().length - 1, state.step + delta));
       render();
     }
 
     function renderProgress() {
-      $("progress").innerHTML = Array.from({ length: 7 }, (_, index) => `<span class="dot ${index <= state.step ? "active" : ""}"></span>`).join("");
+      const steps = auditSteps();
+      $("progress").style.gridTemplateColumns = `repeat(${steps.length}, 1fr)`;
+      $("progress").innerHTML = Array.from({ length: steps.length }, (_, index) => `<span class="dot ${index <= state.step ? "active" : ""}"></span>`).join("");
     }
 
     function renderMap() {
@@ -1443,13 +1547,16 @@
       document.querySelectorAll("[data-toggle]").forEach((button) => button.addEventListener("click", () => toggle(button.dataset.toggle, button.dataset.value)));
       document.querySelectorAll("[data-size]").forEach((button) => button.addEventListener("click", () => setCompanySize(button.dataset.size)));
       document.querySelectorAll("[data-category]").forEach((button) => button.addEventListener("click", () => { state.ui.category = button.dataset.category; render(); }));
+      document.querySelectorAll("[data-quick-add-tool]").forEach((button) => button.addEventListener("click", () => addKnownTool(button.dataset.quickAddTool)));
       document.querySelectorAll("[data-select-tool]").forEach((button) => button.addEventListener("click", () => { state.ui.selectedCatalogId = button.dataset.selectTool; state.ui.customOpen = false; render(); }));
+      document.querySelectorAll("[data-remove-tool]").forEach((button) => button.addEventListener("click", () => removeTool(Number(button.dataset.removeTool))));
       $("industrySelect")?.addEventListener("change", (event) => { state.company.industry = event.target.value; render(); });
       $("toolSearch")?.addEventListener("input", (event) => { state.ui.search = event.target.value; render(); });
       $("openCustomTool")?.addEventListener("click", () => { state.ui.customOpen = true; state.ui.selectedCatalogId = ""; render(); });
       $("addTeam")?.addEventListener("click", () => { const value = $("customTeam").value.trim(); if (value && !state.teams.includes(value)) state.teams.push(value); render(); });
       $("sampleTools")?.addEventListener("click", addDefaultTools);
       $("knownToolForm")?.addEventListener("submit", addKnownToolFromForm);
+      document.querySelectorAll(".refineToolForm").forEach((form) => form.addEventListener("submit", updateToolFromForm));
       $("customToolForm")?.addEventListener("submit", addCustomToolFromForm);
       $("verifyForm")?.addEventListener("submit", submitForVerification);
     }
