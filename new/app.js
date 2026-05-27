@@ -23,6 +23,10 @@ const pageMeta = {
     title: "Book a SaaS Audit | DeSaaS",
     description: "Share a little context and DeSaaS will identify the first practical place to simplify your software stack — from spend and overlap to workflow friction and renewal timing.",
   },
+  "/audit.html": {
+    title: "Book a SaaS Audit | DeSaaS Preview",
+    description: "Preview the alternate DeSaaS audit direction for finding the first practical place to simplify your software stack.",
+  },
   "/new": {
     title: "DeSaaS Preview | Own Your Tools",
     description: "Preview a DeSaaS direction focused on owned operating surfaces, hidden complexity cost, AI-ready workflows, and practical stack simplification.",
@@ -48,6 +52,7 @@ const routes = {
   "/insights": renderInsights,
   "/calculator": renderCalculatorPage,
   "/book-audit": renderBookAudit,
+  "/audit.html": renderBookAudit,
   "/new": renderNewHome,
 };
 
