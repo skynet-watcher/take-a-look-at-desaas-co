@@ -29,7 +29,7 @@ const pageMeta = {
   },
 };
 
-function updateMeta(title, description) {
+function updateMeta(title, description, { noindex = false } = {}) {
   document.title = title;
   const set = (sel, attr, val) => document.querySelector(sel)?.setAttribute(attr, val);
   set('meta[name="description"]', "content", description);
@@ -39,6 +39,7 @@ function updateMeta(title, description) {
   set('meta[name="twitter:title"]', "content", title);
   set('meta[name="twitter:description"]', "content", description);
   set('link[rel="canonical"]', "href", `https://desaas.co${window.location.pathname}`);
+  set('meta[name="robots"]', "content", noindex ? "noindex, nofollow" : "index, follow");
 }
 
 const routes = {
@@ -1056,11 +1057,12 @@ function render() {
     updateMeta(`${article.title} | DeSaaS`, article.intro);
   } else if (current === "/privacy") {
     app.innerHTML = renderPrivacy();
-    updateMeta("Privacy Policy | DeSaaS", "DeSaaS collects only the information needed to understand your stack, respond to your request, and deliver the work you ask for.");
+    updateMeta("Privacy Policy | DeSaaS", "DeSaaS collects only the information needed to understand your stack, respond to your request, and deliver the work you ask for.", { noindex: true });
   } else {
     app.innerHTML = (routes[current] || renderHome)();
     const meta = pageMeta[current] || pageMeta["/"];
-    updateMeta(meta.title, meta.description);
+    const isPreview = current === "/new" || current.startsWith("/new/");
+    updateMeta(meta.title, meta.description, { noindex: isPreview });
   }
   wireMenu();
   wireCalculator();

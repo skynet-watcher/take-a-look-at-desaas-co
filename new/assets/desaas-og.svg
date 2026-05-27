@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title desc">
+  <title id="title">DeSaaS conversion estimator and stack audit</title>
+  <desc id="desc">A DeSaaS social preview card for the 12-month SaaS conversion estimator and 8-minute stack audit.</desc>
+  <rect width="1200" height="630" fill="#f8f6f1"/>
+  <path d="M0 0h1200v630H0z" fill="#fffdf8" opacity=".62"/>
+  <g stroke="#101820" stroke-opacity=".045" stroke-width="1">
+    <path d="M80 0v630M160 0v630M240 0v630M320 0v630M400 0v630M480 0v630M560 0v630M640 0v630M720 0v630M800 0v630M880 0v630M960 0v630M1040 0v630M1120 0v630"/>
+    <path d="M0 80h1200M0 160h1200M0 240h1200M0 320h1200M0 400h1200M0 480h1200M0 560h1200"/>
+  </g>
+  <rect x="88" y="82" width="74" height="74" rx="22" fill="#2f7d68"/>
+  <text x="125" y="128" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="28" font-weight="800" fill="#fffdf8">De</text>
+  <text x="184" y="128" font-family="Inter, Arial, sans-serif" font-size="34" font-weight="800" fill="#101820">DeSaaS</text>
+  <text x="88" y="248" font-family="Inter, Arial, sans-serif" font-size="82" font-weight="800" letter-spacing="-1" fill="#101820">Turn SaaS sprawl</text>
+  <text x="88" y="336" font-family="Inter, Arial, sans-serif" font-size="82" font-weight="800" letter-spacing="-1" fill="#101820">into a 12-month plan.</text>
+  <text x="92" y="415" font-family="Georgia, serif" font-size="38" font-style="italic" fill="#1f5c4c">Estimate cost, complexity, productivity, and payback.</text>
+  <g transform="translate(90 485)">
+    <rect width="230" height="72" rx="16" fill="#dff2eb" stroke="#2f7d68" stroke-opacity=".35"/>
+    <text x="24" y="31" font-family="Inter, Arial, sans-serif" font-size="15" font-weight="800" fill="#58616d">ESTIMATED FIRST-YEAR GAIN</text>
+    <text x="24" y="56" font-family="Georgia, serif" font-size="30" fill="#1f5c4c">$54k+</text>
+  </g>
+  <g transform="translate(348 485)">
+    <rect width="230" height="72" rx="16" fill="#fffdf8" stroke="#e6e1d8"/>
+    <text x="24" y="31" font-family="Inter, Arial, sans-serif" font-size="15" font-weight="800" fill="#58616d">STACK AUDIT</text>
+    <text x="24" y="56" font-family="Georgia, serif" font-size="30" fill="#101820">8 minutes</text>
+  </g>
+  <g transform="translate(930 125)">
+    <rect x="0" y="0" width="160" height="330" rx="22" fill="#101820"/>
+    <rect x="24" y="38" width="112" height="10" rx="5" fill="#dff2eb"/>
+    <rect x="24" y="78" width="72" height="58" rx="12" fill="#2f7d68"/>
+    <rect x="24" y="158" width="112" height="58" rx="12" fill="#2d5f84"/>
+    <rect x="24" y="238" width="92" height="58" rx="12" fill="#b86f2d"/>
+  </g>
+</svg>
