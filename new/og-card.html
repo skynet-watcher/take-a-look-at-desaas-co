@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1200">
+<title>OG Card</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    width: 1200px;
+    height: 630px;
+    overflow: hidden;
+    background: #f8f6f1;
+    font-family: "Inter", system-ui, sans-serif;
+    color: #101820;
+    position: relative;
+  }
+
+  /* Grid texture */
+  body::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(90deg, rgba(16,24,32,0.04) 1px, transparent 1px),
+      linear-gradient(rgba(16,24,32,0.04) 1px, transparent 1px);
+    background-size: 60px 60px;
+    mask-image: linear-gradient(160deg, black 0%, rgba(0,0,0,0.4) 60%, transparent 100%);
+    pointer-events: none;
+  }
+
+  /* Green accent bar top-left */
+  .accent-bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 6px;
+    height: 100%;
+    background: linear-gradient(180deg, #2f7d68 0%, #1f5c4c 100%);
+  }
+
+  /* Left content */
+  .left {
+    position: absolute;
+    left: 72px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 560px;
+  }
+
+  .wordmark {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 42px;
+  }
+
+  .wordmark-icon {
+    width: 52px;
+    height: 52px;
+    background: #101820;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .wordmark-icon svg {
+    width: 28px;
+    height: 28px;
+  }
+
+  .wordmark-text {
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    color: #101820;
+  }
+
+  .wordmark-text em {
+    color: #2f7d68;
+    font-style: normal;
+  }
+
+  .headline {
+    font-family: "Instrument Serif", Georgia, serif;
+    font-size: 64px;
+    line-height: 1.05;
+    letter-spacing: -1.5px;
+    color: #101820;
+    margin-bottom: 28px;
+  }
+
+  .headline em {
+    font-style: italic;
+    color: #2f7d68;
+  }
+
+  .sub {
+    font-size: 20px;
+    font-weight: 500;
+    color: #58616d;
+    line-height: 1.5;
+    max-width: 460px;
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 40px;
+    background: #2f7d68;
+    color: #fff;
+    font-size: 15px;
+    font-weight: 700;
+    padding: 10px 22px;
+    border-radius: 999px;
+    letter-spacing: 0.1px;
+  }
+
+  .badge::before {
+    content: "";
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #dff2eb;
+    opacity: 0.8;
+  }
+
+  /* Right visual */
+  .right {
+    position: absolute;
+    right: 56px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 380px;
+    height: 380px;
+  }
+
+  /* Center "De" tile */
+  .center-tile {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 88px;
+    height: 88px;
+    background: #101820;
+    border-radius: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 20px 60px rgba(16,24,32,0.22);
+    z-index: 5;
+  }
+
+  .center-tile-label {
+    font-family: "Instrument Serif", Georgia, serif;
+    font-size: 34px;
+    font-style: italic;
+    color: #2f7d68;
+    line-height: 1;
+  }
+
+  /* Connector ring */
+  .ring {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 280px;
+    height: 280px;
+    border-radius: 50%;
+    border: 1.5px dashed rgba(47,125,104,0.2);
+  }
+
+  /* Orbiting tiles */
+  .orbit-tile {
+    position: absolute;
+    width: 68px;
+    height: 54px;
+    border: 1.5px solid rgba(47,125,104,0.22);
+    border-radius: 14px;
+    background: rgba(223,242,235,0.85);
+    backdrop-filter: blur(10px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 8px 24px rgba(47,125,104,0.12);
+    z-index: 3;
+  }
+
+  .orbit-tile-icon {
+    font-size: 16px;
+    line-height: 1;
+  }
+
+  .orbit-tile-label {
+    font-size: 9px;
+    font-weight: 800;
+    color: #1f5c4c;
+    letter-spacing: 0.2px;
+    text-align: center;
+    line-height: 1.2;
+  }
+
+  /* connector lines */
+  .connectors {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+  }
+
+  /* Faded saas logos (greyed, being cancelled) */
+  .ghost-tile {
+    position: absolute;
+    width: 52px;
+    height: 42px;
+    border: 1.5px solid rgba(16,24,32,0.08);
+    border-radius: 10px;
+    background: rgba(255,255,255,0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform: translate(-50%, -50%);
+    opacity: 0.35;
+    z-index: 1;
+  }
+
+  .ghost-tile-label {
+    font-size: 8px;
+    font-weight: 700;
+    color: #58616d;
+    text-align: center;
+  }
+
+  .domain-tag {
+    position: absolute;
+    bottom: 40px;
+    left: 72px;
+    font-size: 15px;
+    font-weight: 500;
+    color: rgba(88,97,109,0.7);
+    letter-spacing: 0.2px;
+  }
+</style>
+</head>
+<body>
+
+<div class="accent-bar"></div>
+
+<!-- Left copy -->
+<div class="left">
+  <div class="wordmark">
+    <div class="wordmark-icon">
+      <svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <text x="4" y="22" font-family="Georgia, serif" font-style="italic" font-size="22" fill="#2f7d68">De</text>
+      </svg>
+    </div>
+    <div class="wordmark-text">De<em>SaaS</em></div>
+  </div>
+
+  <h1 class="headline">Replace SaaS.<br><em>Own your tools.</em></h1>
+
+  <p class="sub">Audit your subscriptions, migrate your workflows, and build software your team actually owns.</p>
+
+  <div class="badge">Book a free audit</div>
+</div>
+
+<!-- Right visual diagram -->
+<div class="right">
+  <div class="ring"></div>
+
+  <svg class="connectors" viewBox="0 0 380 380" xmlns="http://www.w3.org/2000/svg">
+    <!-- Lines from center to each orbit tile -->
+    <line x1="190" y1="190" x2="190" y2="52"  stroke="#2f7d68" stroke-width="1" stroke-dasharray="4 4" opacity="0.35"/>
+    <line x1="190" y1="190" x2="320" y2="124" stroke="#2f7d68" stroke-width="1" stroke-dasharray="4 4" opacity="0.35"/>
+    <line x1="190" y1="190" x2="271" y2="296" stroke="#2f7d68" stroke-width="1" stroke-dasharray="4 4" opacity="0.35"/>
+    <line x1="190" y1="190" x2="109" y2="296" stroke="#2f7d68" stroke-width="1" stroke-dasharray="4 4" opacity="0.35"/>
+    <line x1="190" y1="190" x2="60"  y2="124" stroke="#2f7d68" stroke-width="1" stroke-dasharray="4 4" opacity="0.35"/>
+  </svg>
+
+  <!-- Center De tile -->
+  <div class="center-tile">
+    <span class="center-tile-label">De</span>
+  </div>
+
+  <!-- Pentagon orbit tiles (owned tools) -->
+  <!-- Top: Workflow  50%, 14% -->
+  <div class="orbit-tile" style="left:50%;top:14%">
+    <div class="orbit-tile-icon">⚙️</div>
+    <div class="orbit-tile-label">Workflow</div>
+  </div>
+  <!-- Top-right: Finance  84%, 33% -->
+  <div class="orbit-tile" style="left:84%;top:33%">
+    <div class="orbit-tile-icon">💰</div>
+    <div class="orbit-tile-label">Finance</div>
+  </div>
+  <!-- Bottom-right: Support  71%, 78% -->
+  <div class="orbit-tile" style="left:71%;top:78%">
+    <div class="orbit-tile-icon">🎧</div>
+    <div class="orbit-tile-label">Support</div>
+  </div>
+  <!-- Bottom-left: Sales  29%, 78% -->
+  <div class="orbit-tile" style="left:29%;top:78%">
+    <div class="orbit-tile-icon">📈</div>
+    <div class="orbit-tile-label">Sales</div>
+  </div>
+  <!-- Top-left: CS  16%, 33% -->
+  <div class="orbit-tile" style="left:16%;top:33%">
+    <div class="orbit-tile-icon">⭐</div>
+    <div class="orbit-tile-label">CS</div>
+  </div>
+</div>
+
+<div class="domain-tag">desaas.co</div>
+
+</body>
+</html>

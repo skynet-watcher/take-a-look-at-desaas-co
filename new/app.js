@@ -1,7 +1,7 @@
 const pageMeta = {
   "/": {
-    title: "DeSaaS Preview | Own Your Tools",
-    description: "Preview a DeSaaS direction focused on owned operating surfaces, hidden complexity cost, AI-ready workflows, and practical stack simplification.",
+    title: "DeSaaS | Replace Bloated SaaS With Simpler Internal Tools",
+    description: "DeSaaS helps companies reduce SaaS sprawl by replacing bloated subscriptions with simple, integrated tools using only the features they actually need.",
   },
   "/how-it-works": {
     title: "How DeSaaS Works | A Safe, Practical Way to Reduce Software Sprawl",
@@ -23,10 +23,6 @@ const pageMeta = {
     title: "Book a SaaS Audit | DeSaaS",
     description: "Share a little context and DeSaaS will identify the first practical place to simplify your software stack — from spend and overlap to workflow friction and renewal timing.",
   },
-  "/audit.html": {
-    title: "Book a SaaS Audit | DeSaaS Preview",
-    description: "Preview the alternate DeSaaS audit direction for finding the first practical place to simplify your software stack.",
-  },
   "/new": {
     title: "DeSaaS Preview | Own Your Tools",
     description: "Preview a DeSaaS direction focused on owned operating surfaces, hidden complexity cost, AI-ready workflows, and practical stack simplification.",
@@ -39,10 +35,10 @@ function updateMeta(title, description) {
   set('meta[name="description"]', "content", description);
   set('meta[property="og:title"]', "content", title);
   set('meta[property="og:description"]', "content", description);
-  set('meta[property="og:url"]', "content", `${window.location.origin}${window.location.pathname}`);
+  set('meta[property="og:url"]', "content", `https://desaas.co${window.location.pathname}`);
   set('meta[name="twitter:title"]', "content", title);
   set('meta[name="twitter:description"]', "content", description);
-  set('link[rel="canonical"]', "href", `${window.location.origin}${window.location.pathname}`);
+  set('link[rel="canonical"]', "href", `https://desaas.co${window.location.pathname}`);
 }
 
 const routes = {
@@ -52,7 +48,6 @@ const routes = {
   "/insights": renderInsights,
   "/calculator": renderCalculatorPage,
   "/book-audit": renderBookAudit,
-  "/audit.html": renderBookAudit,
   "/new": renderNewHome,
 };
 
@@ -119,7 +114,6 @@ const articles = {
 };
 
 const app = document.querySelector("#app");
-const BASE_PATH = "/new";
 let animationTimer;
 let spendTimer;
 let processTimers = [];
@@ -129,29 +123,47 @@ function html(strings, ...values) {
 }
 
 function path() {
-  const normalized = window.location.pathname.replace(/\/$/, "") || "/";
-  if (normalized === BASE_PATH) return "/";
-  if (normalized.startsWith(`${BASE_PATH}/`)) return normalized.slice(BASE_PATH.length) || "/";
-  return normalized;
+  return window.location.pathname.replace(/\/$/, "") || "/";
+}
+
+function isPreviewPath() {
+  const current = path();
+  return current === "/new" || current.startsWith("/new/");
+}
+
+function normalizeRoute(route) {
+  return route === "/audit.html" ? "/book-audit" : route;
+}
+
+function routePath() {
+  const current = path();
+  if (current === "/new") return "/new";
+  if (current.startsWith("/new/")) return normalizeRoute(current.slice(4) || "/");
+  return normalizeRoute(current);
+}
+
+function previewHref() {
+  const current = path();
+  return current === "/" ? "/new" : `/new${current}`;
+}
+
+function scopePreviewLinks(markup) {
+  if (!isPreviewPath()) return markup;
+  return markup.replace(/href="\/(?!\/)/g, 'href="/new/');
 }
 
 function navigate(event) {
   const link = event.target.closest("a");
   if (!link || link.origin !== window.location.origin || link.hasAttribute("data-external")) return;
+  if (link.pathname === "/new/audit.html" || link.pathname.startsWith("/new/estimator")) return;
   event.preventDefault();
   history.pushState({}, "", link.pathname);
   render();
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
-function withBase(markup) {
-  return markup
-    .replace(/href="\/(?!new\/|assets\/|api\/|#)/g, `href="${BASE_PATH}/`)
-    .replace(/href="\/"/g, `href="${BASE_PATH}/"`);
-}
-
 function header() {
-  const current = path();
+  const current = routePath();
   const links = [
     ["/how-it-works", "How It Works"],
     ["/use-cases", "Use Cases"],
@@ -203,7 +215,10 @@ function footer() {
 }
 
 function pageShell(content) {
-  return withBase(`${header()}<main id="main">${content}</main>${footer()}`);
+  const previewSwitch = isPreviewPath()
+    ? ""
+    : `<a class="preview-switch" href="${previewHref()}" aria-label="View the alternate DeSaaS preview page">View new version</a>`;
+  return scopePreviewLinks(`${previewSwitch}${header()}<main id="main">${content}</main>${footer()}`);
 }
 
 function ctaButtons() {
@@ -217,22 +232,22 @@ function ctaButtons() {
 
 function pipelineAnimation() {
   const saasLogos = [
-    { name: "Salesforce", category: "CRM", src: "/assets/tool-logos/salesforce.svg", action: "keep", x: 10, y: 18, r: -5, s: 1.06 },
-    { name: "HubSpot", category: "CRM", src: "/assets/tool-logos/hubspot.svg", action: "merge", x: 31, y: 9, r: 4, s: 0.98 },
-    { name: "Pipedrive", category: "CRM", src: "/assets/tool-logos/pipedrive.svg", action: "remove", x: 54, y: 17, r: -2, s: 0.94 },
-    { name: "Slack", category: "Comms", src: "/assets/tool-logos/slack.svg", action: "keep", x: 77, y: 11, r: 3, s: 1.02 },
-    { name: "Zoom", category: "Comms", src: "/assets/tool-logos/zoom.svg", action: "keep", x: 16, y: 42, r: 5, s: 0.96 },
-    { name: "Asana", category: "PM", src: "/assets/tool-logos/asana.svg", action: "replace", x: 38, y: 40, r: -6, s: 1 },
-    { name: "Monday", category: "PM", src: "/assets/tool-logos/monday-com.svg", action: "merge", x: 62, y: 43, r: 3, s: 1.05 },
-    { name: "Notion", category: "Docs", src: "/assets/tool-logos/notion.svg", action: "keep", x: 84, y: 38, r: -4, s: 0.95 },
-    { name: "Trello", category: "PM", src: "/assets/tool-logos/trello.svg", action: "remove", x: 24, y: 66, r: 4, s: 0.94 },
-    { name: "Airtable", category: "Data", src: "/assets/tool-logos/airtable.svg", action: "replace", x: 47, y: 70, r: -3, s: 1.03 },
-    { name: "QuickBooks", category: "Finance", src: "/assets/tool-logos/quickbooks.svg", action: "keep", x: 70, y: 67, r: 6, s: 0.98 },
-    { name: "Expensify", category: "Finance", src: "/assets/tool-logos/expensify.svg", action: "merge", x: 88, y: 69, r: -5, s: 0.92 },
-    { name: "Gusto", category: "Admin", src: "/assets/tool-logos/gusto.svg", action: "remove", x: 9, y: 76, r: -2, s: 0.9 },
-    { name: "Zendesk", category: "Support", src: "/assets/tool-logos/zendesk.svg", action: "keep", x: 36, y: 84, r: 2, s: 0.96 },
-    { name: "Intercom", category: "Support", src: "/assets/tool-logos/intercom.svg", action: "merge", x: 61, y: 84, r: -4, s: 0.92 },
-    { name: "Zapier", category: "Automation", src: "/assets/tool-logos/zapier.svg", action: "replace", x: 82, y: 83, r: 5, s: 0.95 },
+    { name: "Salesforce", category: "CRM", src: "/logos/salesforce.svg", action: "keep", x: 10, y: 18, r: -5, s: 1.06 },
+    { name: "HubSpot", category: "CRM", src: "/logos/hubspot.svg", action: "merge", x: 31, y: 9, r: 4, s: 0.98 },
+    { name: "Pipedrive", category: "CRM", src: "/logos/pipedrive.svg", action: "remove", x: 54, y: 17, r: -2, s: 0.94 },
+    { name: "Slack", category: "Comms", src: "/logos/slack.svg", action: "keep", x: 77, y: 11, r: 3, s: 1.02 },
+    { name: "Zoom", category: "Comms", src: "/logos/zoom.svg", action: "keep", x: 16, y: 42, r: 5, s: 0.96 },
+    { name: "Asana", category: "PM", src: "/logos/asana.svg", action: "replace", x: 38, y: 40, r: -6, s: 1 },
+    { name: "Monday", category: "PM", src: "/logos/monday.svg", action: "merge", x: 62, y: 43, r: 3, s: 1.05 },
+    { name: "Notion", category: "Docs", src: "/logos/notion.svg", action: "keep", x: 84, y: 38, r: -4, s: 0.95 },
+    { name: "Trello", category: "PM", src: "/logos/trello.svg", action: "remove", x: 24, y: 66, r: 4, s: 0.94 },
+    { name: "Airtable", category: "Data", src: "/logos/airtable.svg", action: "replace", x: 47, y: 70, r: -3, s: 1.03 },
+    { name: "QuickBooks", category: "Finance", src: "/logos/quickbooks.svg", action: "keep", x: 70, y: 67, r: 6, s: 0.98 },
+    { name: "Expensify", category: "Finance", src: "/logos/expensify.svg", action: "merge", x: 88, y: 69, r: -5, s: 0.92 },
+    { name: "Gusto", category: "Admin", src: "/logos/gusto.svg", action: "remove", x: 9, y: 76, r: -2, s: 0.9 },
+    { name: "Zendesk", category: "Support", src: "/logos/zendesk.svg", action: "keep", x: 36, y: 84, r: 2, s: 0.96 },
+    { name: "Intercom", category: "Support", src: "/logos/intercom.svg", action: "merge", x: 61, y: 84, r: -4, s: 0.92 },
+    { name: "Zapier", category: "Automation", src: "/logos/zapier.svg", action: "replace", x: 82, y: 83, r: 5, s: 0.95 },
   ];
   return html`
     <div class="animation-card" data-stage="0" aria-label="DeSaaS pipeline animation">
@@ -319,10 +334,6 @@ function pipelineAnimation() {
 }
 
 function renderHome() {
-  return renderNewHome();
-}
-
-function renderOriginalHome() {
   return pageShell(html`
     <section class="container hero">
       <div>
@@ -349,8 +360,8 @@ function renderOriginalHome() {
 function previewCtas() {
   return html`
     <div class="actions">
-      <a class="button primary" href="/calculator">Find your first DeSaaS opportunity</a>
-      <a class="button secondary" href="/book-audit">Start the stack audit</a>
+      <a class="button primary" href="/estimator/">Find your first DeSaaS opportunity</a>
+      <a class="button secondary" href="/audit.html">Start the stack audit</a>
     </div>
   `;
 }
@@ -1038,7 +1049,7 @@ function render() {
   clearInterval(animationTimer);
   clearInterval(spendTimer);
   clearAnimationTimers();
-  const current = path();
+  const current = routePath();
   if (articles[current]) {
     app.innerHTML = renderArticle(articles[current]);
     const article = articles[current];

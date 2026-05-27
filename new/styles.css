@@ -74,6 +74,41 @@ textarea {
   transform: translateY(0);
 }
 
+.preview-switch {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 30;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  border: 1px solid rgba(230, 225, 216, 0.9);
+  border-radius: 999px;
+  padding: 0.56rem 0.78rem;
+  background: rgba(255, 253, 248, 0.86);
+  color: var(--accent-dark);
+  box-shadow: 0 12px 32px rgba(16, 24, 32, 0.08);
+  backdrop-filter: blur(14px);
+  font-size: 0.76rem;
+  font-weight: 800;
+  line-height: 1;
+  transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
+}
+
+.preview-switch:hover {
+  transform: translateY(-1px);
+  border-color: rgba(47, 125, 104, 0.34);
+  background: rgba(255, 255, 255, 0.94);
+}
+
+.preview-switch::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
 .site-header {
   position: sticky;
   top: 0;

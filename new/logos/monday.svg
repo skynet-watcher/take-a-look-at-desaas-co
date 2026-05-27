@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 80" role="img" aria-label="Monday.com">
+  <rect width="240" height="80" rx="18" fill="#fff"/>
+  <circle cx="58" cy="42" r="12" fill="#FF3D57"/>
+  <circle cx="88" cy="42" r="12" fill="#FFCB00"/>
+  <circle cx="118" cy="42" r="12" fill="#00CA72"/>
+  <text x="174" y="51" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="26" font-weight="800" fill="#111">monday</text>
+</svg>
