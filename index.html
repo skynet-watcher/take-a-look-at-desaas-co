@@ -771,7 +771,7 @@
       });
     }
 
-    function calculate() {
+    function calculate({ updateChart = true } = {}) {
       const model = readModel();
       const series = buildSeries(model);
       const full = series[series.length - 1];
@@ -800,6 +800,8 @@
         : `At the current settings, estimated payback lands after the 12-month horizon. The estimated month-12 position is <em>${money(full.cumulative)}</em>, so narrow the first conversion or pick a faster cancellation target.`;
       $("auditLink").href = auditUrl();
       saveLinkedState(model, series, assumptions);
+
+      if (!updateChart) return;
 
       const data = {
         labels: series.map((point) => `M${point.month}`),
@@ -855,10 +857,25 @@
       }
     }
 
-    inputs.forEach((id) => $(id).addEventListener("input", () => {
+    function markCustomScenario() {
       document.querySelectorAll(".preset").forEach((button) => button.classList.remove("active"));
-      calculate();
-    }));
+    }
+
+    inputs.forEach((id) => {
+      const input = $(id);
+      input.addEventListener("input", () => {
+        markCustomScenario();
+        calculate({ updateChart: false });
+      });
+      input.addEventListener("change", () => {
+        markCustomScenario();
+        calculate();
+      });
+      input.addEventListener("pointerup", () => calculate());
+      input.addEventListener("keyup", (event) => {
+        if (["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", "Home", "End", "PageUp", "PageDown"].includes(event.key)) calculate();
+      });
+    });
 
     document.querySelectorAll(".preset").forEach((button) => {
       button.addEventListener("click", () => {
