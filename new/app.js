@@ -43,13 +43,12 @@ function updateMeta(title, description, { noindex = false } = {}) {
 }
 
 const routes = {
-  "/": renderHome,
+  "/": renderNewHome,
   "/how-it-works": renderHowItWorks,
   "/use-cases": renderUseCases,
   "/insights": renderInsights,
   "/calculator": renderCalculatorPage,
   "/book-audit": renderBookAudit,
-  "/new": renderNewHome,
 };
 
 const articles = {
@@ -216,10 +215,7 @@ function footer() {
 }
 
 function pageShell(content) {
-  const previewSwitch = isPreviewPath()
-    ? ""
-    : `<a class="preview-switch" href="${previewHref()}" aria-label="View the alternate DeSaaS preview page">View new version</a>`;
-  return scopePreviewLinks(`${previewSwitch}${header()}<main id="main">${content}</main>${footer()}`);
+  return `${header()}<main id="main">${content}</main>${footer()}`;
 }
 
 function ctaButtons() {
@@ -361,17 +357,16 @@ function renderHome() {
 function previewCtas() {
   return html`
     <div class="actions">
-      <a class="button primary" href="/estimator/">Find your first DeSaaS opportunity</a>
-      <a class="button secondary" href="/audit.html">Start the stack audit</a>
+      <a class="button primary" href="/book-audit">Book a free audit</a>
+      <a class="button secondary" href="/how-it-works">How it works</a>
     </div>
   `;
 }
 
 function renderNewHome() {
   return pageShell(html`
-    <section class="container hero preview-hero">
+    <section class="container hero">
       <div>
-        <span class="eyebrow preview-label">Preview direction</span>
         <h1>Own your tools.</h1>
         <p class="lead">SaaS fees are just the start. The hidden cost is the complexity your team has to navigate every day.</p>
         <p class="outcome-line">Keep what works. Own the process around it.</p>
@@ -501,11 +496,11 @@ function aiReadySection() {
 
 function previewConversionSection() {
   return html`
-    <section class="section final-band preview-final">
+    <section class="section final-band">
       <div class="container">
-        <span class="eyebrow">Preview conversion path</span>
+        <span class="eyebrow">Ready to start?</span>
         <h2>Find the first workflow worth owning.</h2>
-        <p class="lead">Use the estimator to size the opportunity, then start the stack audit so DeSaaS can map the tools, connections, reports, and verification work behind it.</p>
+        <p class="lead">Book a free audit and DeSaaS will map your stack, find the first opportunity, and show you exactly where to start.</p>
         ${previewCtas()}
       </div>
     </section>
