@@ -12,6 +12,7 @@ Static prototype for the DeSaaS 12-month conversion estimator and 8-minute SaaS 
 - Shared browser state is stored in `localStorage` under `desaas_audit_v1`.
 - The audit and estimator pass handoff values through URL parameters.
 - Tool logo marks are local SVGs in `assets/tool-logos/`.
+- SEO basics are included with canonical tags, Open Graph/Twitter metadata, JSON-LD, `robots.txt`, `sitemap.xml`, and cache headers in `vercel.json`.
 - `api/audit-submit.js` expects `RESEND_API_KEY` and optional `DESAAS_AUDIT_TO` in Vercel.
 
 ## Deploy

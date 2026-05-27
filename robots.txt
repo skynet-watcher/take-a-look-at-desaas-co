@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://take-a-look-at-desaas-co.vercel.app/sitemap.xml
