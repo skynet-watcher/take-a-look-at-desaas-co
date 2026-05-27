@@ -1,8 +1,9 @@
 {
-  "rewrites": [
+  "redirects": [
     {
-      "source": "/new/:path*",
-      "destination": "/new/index.html"
+      "source": "/(.*)",
+      "destination": "https://desaas.co/$1",
+      "permanent": true
     }
   ],
   "headers": [
