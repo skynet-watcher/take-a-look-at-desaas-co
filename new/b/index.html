@@ -1,0 +1,957 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DeSaaS 12-Month SaaS Conversion Estimator</title>
+  <meta name="description" content="Estimate the cost, complexity, productivity lift, payback timing, and first-year gain from converting SaaS sprawl into focused internal tools.">
+  <meta name="robots" content="index,follow">
+  <meta name="theme-color" content="#f8f6f1">
+  <link rel="canonical" href="https://desaas.co/b/">
+  <meta property="og:site_name" content="DeSaaS">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="DeSaaS 12-Month SaaS Conversion Estimator">
+  <meta property="og:description" content="Model estimated SaaS savings, productivity gain, build cost, complexity, and payback over a 12-month conversion plan.">
+  <meta property="og:url" content="https://desaas.co/b/">
+  <meta property="og:image" content="https://desaas.co/assets/og-image.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="DeSaaS 12-Month SaaS Conversion Estimator">
+  <meta name="twitter:description" content="Estimate payback timing and first-year gain from converting SaaS sprawl into focused internal tools.">
+  <meta name="twitter:image" content="https://desaas.co/assets/og-image.png">
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "DeSaaS 12-Month SaaS Conversion Estimator",
+      "applicationCategory": "BusinessApplication",
+      "operatingSystem": "Web",
+      "url": "https://desaas.co/b/",
+      "description": "Estimate SaaS savings, productivity gain, implementation investment, complexity, and payback timing for a 12-month SaaS conversion plan.",
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+  <style>
+    :root {
+      --bg: #f8f6f1;
+      --paper: #fffdf8;
+      --ink: #101820;
+      --muted: #58616d;
+      --line: #e6e1d8;
+      --soft: rgba(16, 24, 32, 0.07);
+      --green: #2f7d68;
+      --green-dark: #1f5c4c;
+      --mint: #dff2eb;
+      --amber: #b86f2d;
+      --blue: #2d5f84;
+      --plum: #694a78;
+      --red: #9d3f35;
+      --shadow: 0 24px 80px rgba(16, 24, 32, 0.08);
+      --sans: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --serif: "Instrument Serif", Georgia, serif;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: var(--sans);
+      -webkit-font-smoothing: antialiased;
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background:
+        linear-gradient(90deg, rgba(16, 24, 32, 0.025) 1px, transparent 1px),
+        linear-gradient(rgba(16, 24, 32, 0.025) 1px, transparent 1px);
+      background-size: 64px 64px;
+      mask-image: linear-gradient(to bottom, black 0%, transparent 70%);
+    }
+    button, input { font: inherit; }
+    button { cursor: pointer; }
+    a { color: inherit; }
+
+    .preview-switch {
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      z-index: 30;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      border: 1px solid rgba(230, 225, 216, 0.9);
+      border-radius: 999px;
+      padding: 0.56rem 0.78rem;
+      background: rgba(255, 253, 248, 0.86);
+      color: var(--green-dark);
+      box-shadow: 0 12px 32px rgba(16, 24, 32, 0.08);
+      backdrop-filter: blur(14px);
+      text-decoration: none;
+      font-size: 0.76rem;
+      font-weight: 800;
+      line-height: 1;
+      transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
+    }
+    .preview-switch:hover {
+      transform: translateY(-1px);
+      border-color: rgba(47, 125, 104, 0.34);
+      background: rgba(255, 255, 255, 0.94);
+    }
+    .preview-switch:focus-visible {
+      outline: 3px solid rgba(47, 125, 104, 0.22);
+      outline-offset: 3px;
+    }
+    .preview-switch::before {
+      content: "";
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--green);
+    }
+
+    .shell {
+      width: min(1160px, calc(100% - 2rem));
+      margin: 0 auto;
+      padding: 4rem 0;
+      position: relative;
+    }
+    .mast {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 2rem;
+      align-items: end;
+      padding-bottom: 2.25rem;
+      border-bottom: 1px solid var(--line);
+    }
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      margin-bottom: 1rem;
+      color: var(--green-dark);
+      font-size: 0.78rem;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+    .eyebrow::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--green);
+    }
+    h1, h2, h3, p { margin: 0; }
+    h1 {
+      max-width: 840px;
+      font-size: clamp(3rem, 7vw, 6.35rem);
+      line-height: 0.94;
+      letter-spacing: 0;
+      font-weight: 800;
+    }
+    .serif {
+      font-family: var(--serif);
+      font-style: italic;
+      font-weight: 400;
+    }
+    .meta {
+      min-width: 190px;
+      text-align: right;
+      color: var(--muted);
+      font-size: 0.78rem;
+      line-height: 1.7;
+    }
+    .meta strong {
+      display: block;
+      color: var(--ink);
+      font-weight: 800;
+    }
+    .lede {
+      max-width: 860px;
+      margin: 2.75rem 0 3rem;
+      font-family: var(--serif);
+      font-size: clamp(1.35rem, 2.15vw, 1.85rem);
+      line-height: 1.35;
+      color: #1a252e;
+    }
+    .lede em { color: var(--green-dark); }
+    .cta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin: -1.6rem 0 3rem;
+    }
+    .cta {
+      min-height: 46px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 0.75rem 1rem;
+      background: rgba(255, 253, 248, 0.72);
+      color: var(--ink);
+      font-size: 0.86rem;
+      font-weight: 800;
+      box-shadow: 0 14px 38px rgba(16, 24, 32, 0.06);
+      transition: transform 160ms ease, border-color 160ms ease;
+    }
+    .cta.primary {
+      background: var(--ink);
+      color: var(--bg);
+      border-color: var(--ink);
+    }
+    .cta:hover {
+      transform: translateY(-1px);
+      border-color: rgba(47, 125, 104, 0.42);
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      margin-bottom: 4rem;
+    }
+    .stat {
+      padding: 1.35rem 1.35rem 1.45rem 0;
+      border-right: 1px solid var(--soft);
+    }
+    .stat + .stat { padding-left: 1.35rem; }
+    .stat:last-child { border-right: 0; }
+    .stat-label {
+      color: var(--muted);
+      font-size: 0.68rem;
+      font-weight: 800;
+      letter-spacing: 0;
+      text-transform: uppercase;
+      margin-bottom: 0.55rem;
+    }
+    .stat-value {
+      font-family: var(--serif);
+      font-size: clamp(1.85rem, 3vw, 2.75rem);
+      line-height: 0.95;
+      color: var(--ink);
+    }
+    .stat-value.good { color: var(--green-dark); }
+    .stat-value.warn { color: var(--amber); }
+    .stat-sub {
+      margin-top: 0.55rem;
+      color: var(--muted);
+      font-size: 0.8rem;
+      line-height: 1.35;
+    }
+
+    .editorial {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      margin-bottom: 4rem;
+    }
+    .editorial h2 {
+      font-size: clamp(1.9rem, 3vw, 2.8rem);
+      line-height: 1;
+      letter-spacing: 0;
+      margin-bottom: 1.2rem;
+    }
+    .editorial p {
+      color: var(--muted);
+      font-size: 0.96rem;
+      line-height: 1.65;
+      margin-bottom: 0.95rem;
+    }
+    .editorial strong { color: var(--ink); }
+
+    .section-head {
+      border-top: 1px solid var(--line);
+      padding-top: 2rem;
+      margin-bottom: 1.5rem;
+    }
+    .section-num {
+      font-family: var(--serif);
+      font-style: italic;
+      color: var(--green-dark);
+      margin-bottom: 0.45rem;
+    }
+    .section-head h2 {
+      max-width: 760px;
+      font-size: clamp(2rem, 4vw, 3.45rem);
+      line-height: 1.02;
+      letter-spacing: 0;
+      margin-bottom: 0.75rem;
+    }
+    .section-head p {
+      max-width: 740px;
+      color: var(--muted);
+      line-height: 1.62;
+    }
+
+    .presets {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.55rem;
+      margin: 2rem 0 1.35rem;
+    }
+    .preset {
+      min-height: 40px;
+      border: 1px solid var(--line);
+      background: rgba(255, 253, 248, 0.58);
+      color: var(--muted);
+      border-radius: 999px;
+      padding: 0.58rem 0.95rem;
+      font-size: 0.82rem;
+      font-weight: 800;
+      box-shadow: 0 10px 28px rgba(16, 24, 32, 0.04);
+      transition: transform 160ms ease, border-color 160ms ease, background 160ms ease, color 160ms ease;
+    }
+    .preset:hover {
+      transform: translateY(-1px);
+      border-color: rgba(47, 125, 104, 0.42);
+      color: var(--ink);
+    }
+    .preset.active {
+      background: var(--ink);
+      color: var(--bg);
+      border-color: var(--ink);
+    }
+
+    .model-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 340px;
+      gap: 1.15rem;
+      align-items: start;
+    }
+    .panel {
+      background:
+        linear-gradient(180deg, rgba(255, 253, 248, 0.96), rgba(255, 253, 248, 0.84)),
+        radial-gradient(circle at 12% 0%, rgba(223, 242, 235, 0.9), transparent 34%);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      box-shadow: 0 28px 90px rgba(16, 24, 32, 0.1);
+    }
+    .chart-panel { padding: 1.35rem; }
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      padding-bottom: 0.9rem;
+      margin-bottom: 1rem;
+      border-bottom: 1px solid var(--soft);
+      color: var(--muted);
+      font-size: 0.78rem;
+      font-weight: 700;
+    }
+    .legend span {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.38rem;
+    }
+    .swatch {
+      width: 10px;
+      height: 10px;
+      border-radius: 2px;
+      display: inline-block;
+    }
+    .line-swatch {
+      width: 18px;
+      height: 3px;
+      border-radius: 999px;
+      display: inline-block;
+    }
+    .chart-wrap {
+      height: 420px;
+      position: relative;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .insight {
+      margin-top: 1rem;
+      border-top: 1px solid var(--line);
+      padding-top: 1rem;
+      font-family: var(--serif);
+      font-size: 1.18rem;
+      line-height: 1.45;
+    }
+    .insight em {
+      color: var(--green-dark);
+      font-style: italic;
+    }
+
+    .controls {
+      padding: 1.25rem;
+    }
+    .controls h3 {
+      font-size: 1rem;
+      margin: 0.3rem 0 1rem;
+    }
+    .control {
+      border-top: 1px solid var(--soft);
+      padding-top: 1rem;
+      margin-top: 1rem;
+    }
+    .control:first-of-type {
+      border-top: 0;
+      padding-top: 0;
+      margin-top: 0;
+    }
+    .label-row {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 0.65rem;
+    }
+    label {
+      color: var(--ink);
+      font-size: 0.82rem;
+      font-weight: 800;
+    }
+    output {
+      color: var(--green-dark);
+      font-size: 0.82rem;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--green);
+    }
+    .derived {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0.65rem;
+      margin-top: 1.15rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--soft);
+    }
+    .derived-item {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      align-items: baseline;
+      padding: 0.75rem 0.85rem;
+      border: 1px solid rgba(47, 125, 104, 0.14);
+      border-radius: 8px;
+      background: rgba(223, 242, 235, 0.34);
+    }
+    .derived-label {
+      color: var(--muted);
+      font-size: 0.72rem;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+    .derived-value {
+      color: var(--green-dark);
+      font-size: 0.9rem;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+    .hint {
+      margin-top: 0.45rem;
+      color: var(--muted);
+      font-size: 0.75rem;
+      line-height: 1.45;
+    }
+    .method {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      margin-top: 1.25rem;
+    }
+    .method-item {
+      border-top: 1px solid var(--line);
+      padding-top: 1rem;
+    }
+    .method-item h3 {
+      font-size: 1rem;
+      margin-bottom: 0.55rem;
+    }
+    .method-item p {
+      color: var(--muted);
+      font-size: 0.88rem;
+      line-height: 1.55;
+    }
+    .foot {
+      margin-top: 3rem;
+      padding-top: 1.4rem;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 0.78rem;
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    @media (max-width: 900px) {
+      .shell { padding: 2rem 0; }
+      .mast, .editorial, .model-grid, .method {
+        grid-template-columns: 1fr;
+      }
+      .meta { text-align: left; }
+      .stats { grid-template-columns: repeat(2, 1fr); }
+      .stat:nth-child(odd) { padding-left: 0; }
+      .stat:nth-child(2) { border-right: 0; }
+      .stat:nth-child(n+3) { border-top: 1px solid var(--soft); }
+      .chart-wrap { height: 360px; }
+    }
+    @media (max-width: 560px) {
+      .stats { grid-template-columns: 1fr; }
+      .stat, .stat + .stat {
+        padding-left: 0;
+        border-right: 0;
+      }
+      .stat + .stat { border-top: 1px solid var(--soft); }
+      .chart-panel, .controls { padding: 1rem; }
+      .chart-wrap { height: 330px; }
+    }
+  </style>
+</head>
+<body>
+  <a class="preview-switch" href="/" aria-label="View the new DeSaaS preview page">View new version</a>
+  <main class="shell">
+    <header class="mast">
+      <div>
+        <div class="eyebrow">DeSaaS business case · draft model</div>
+        <h1>Transform your business in <span class="serif">one year</span>.</h1>
+      </div>
+      <div class="meta">
+        Prepared
+        <strong>May 2026</strong>
+        Horizon
+        <strong>12 months</strong>
+        Status
+        <strong>Planning model</strong>
+      </div>
+    </header>
+
+    <p class="lede">
+      This model estimates the payoff from converting bloated subscriptions into focused internal tools over a practical 12-month plan. It looks at <em>cost, complexity, productivity, and conversion pace</em>, then shows when the program turns cash-positive and how large the first-year gain becomes.
+    </p>
+
+    <div class="cta-row">
+      <a class="cta primary" id="auditLink" href="/b/audit.html">Start the 8-minute stack audit</a>
+      <a class="cta" href="#model">Use the quick estimator</a>
+    </div>
+
+    <section class="stats" aria-label="Model summary">
+      <article class="stat">
+        <div class="stat-label">Estimated monthly savings</div>
+        <div class="stat-value good" id="stat-savings">$21.6k</div>
+        <div class="stat-sub">SaaS reduction plus estimated reclaimed time</div>
+      </article>
+      <article class="stat">
+        <div class="stat-label">Estimated payback month</div>
+        <div class="stat-value" id="stat-payback">Month 10</div>
+        <div class="stat-sub">Estimated cumulative net gain crosses zero</div>
+      </article>
+      <article class="stat">
+        <div class="stat-label">Estimated complexity reduction</div>
+        <div class="stat-value good" id="stat-complexity">42%</div>
+        <div class="stat-sub">Tools, handoffs, exports, and admin drag</div>
+      </article>
+      <article class="stat">
+        <div class="stat-label">Estimated 12-month net gain</div>
+        <div class="stat-value good" id="stat-net">$468k</div>
+        <div class="stat-sub">After build and maintenance costs</div>
+      </article>
+    </section>
+
+    <section class="editorial">
+      <div>
+        <h2>The proposal</h2>
+        <p><strong>Start with the first visible conversion.</strong> Map the current stack, find overlapping tools, and pick a narrow workflow where the team already works around the software with exports, spreadsheets, or manual handoffs.</p>
+        <p><strong>Convert in waves.</strong> Cancel what is unused, consolidate what overlaps, replace workflows where the platform is overbuilt, and renegotiate the few tools that still earn their keep.</p>
+        <p><strong>Use savings to fund the next move.</strong> The model treats implementation as a temporary investment, not permanent overhead. Maintenance remains, but platform waste falls as conversion rises.</p>
+      </div>
+      <div>
+        <h2>Why it works</h2>
+        <p><strong>SaaS cost is only the first gain.</strong> The larger payoff is cleaner work: fewer logins, fewer duplicate records, fewer permission surfaces, and fewer status meetings to reconcile mismatched tools.</p>
+        <p><strong>Complexity has a carrying cost.</strong> Every retained platform adds renewal decisions, admin time, security review, training, reporting, and integration breakage. This model turns that drag into a visible number.</p>
+        <p><strong>The plan can fail safely.</strong> Start with a pilot and only accelerate after measured adoption, realized cancellations, and actual workflow time savings show up.</p>
+      </div>
+    </section>
+
+    <section id="model">
+      <div class="section-head">
+        <div class="section-num">§ 01 — Conversion Economics</div>
+        <h2>One year, one conversion curve, visible payoff.</h2>
+        <p>Adjust the assumptions below the chart. Bars show estimated monthly benefit and investment. The line shows estimated cumulative net gain after build cost and ongoing maintenance.</p>
+      </div>
+
+      <div class="presets" aria-label="Scenario presets">
+        <button class="preset active" type="button" data-preset="baseline">Balanced pilot</button>
+        <button class="preset" type="button" data-preset="aggressive">Fast conversion</button>
+        <button class="preset" type="button" data-preset="complex">High-complexity stack</button>
+        <button class="preset" type="button" data-preset="conservative">Conservative value</button>
+      </div>
+
+      <div class="model-grid">
+        <div class="panel chart-panel">
+          <div class="legend" aria-hidden="true">
+            <span><i class="swatch" style="background: var(--green)"></i>SaaS spend avoided</span>
+            <span><i class="swatch" style="background: var(--blue)"></i>Productivity gain</span>
+            <span><i class="swatch" style="background: var(--amber)"></i>Build investment</span>
+            <span><i class="swatch" style="background: var(--plum)"></i>Maintenance</span>
+            <span><i class="line-swatch" style="background: var(--red)"></i>Cumulative net</span>
+          </div>
+          <div class="chart-wrap">
+            <canvas id="conversionChart" role="img" aria-label="Estimated monthly SaaS savings, productivity gain, build investment, maintenance, and cumulative net gain over 12 months"></canvas>
+          </div>
+          <p class="insight" id="insight">At the current settings, the program reaches payback in <em>month 4</em> and produces <em>$113k</em> in net gain by month 12.</p>
+        </div>
+
+        <aside class="panel controls" aria-label="Model controls">
+          <h3>Stack and conversion inputs</h3>
+
+          <div class="control">
+            <div class="label-row">
+              <label for="spend">Monthly SaaS spend</label>
+              <output id="spendOut">$32k</output>
+            </div>
+            <input id="spend" type="range" min="1000" max="200000" step="1000" value="32000">
+            <p class="hint">Current subscription spend across replaceable categories.</p>
+          </div>
+
+          <div class="control">
+            <div class="label-row">
+              <label for="tools">Tools in scope</label>
+              <output id="toolsOut">24</output>
+            </div>
+            <input id="tools" type="range" min="1" max="90" step="1" value="24">
+            <p class="hint">The part of the stack you are willing to audit and simplify.</p>
+          </div>
+
+          <div class="control">
+            <div class="label-row">
+              <span class="derived-label">Estimated complexity</span>
+              <span class="derived-value" id="complexityOut">Medium</span>
+            </div>
+            <p class="hint">Derived from spend, tool count, team size, and conversion scope.</p>
+          </div>
+
+          <div class="control">
+            <div class="label-row">
+              <label for="team">Affected team size</label>
+              <output id="teamOut">42 people</output>
+            </div>
+            <input id="team" type="range" min="5" max="300" step="1" value="42">
+          </div>
+
+          <div class="control">
+            <div class="label-row">
+              <label for="convert">Target conversion</label>
+              <output id="convertOut">90%</output>
+            </div>
+            <input id="convert" type="range" min="10" max="100" step="5" value="90">
+          </div>
+
+          <div class="derived" aria-label="Estimated assumptions">
+            <div class="derived-item">
+              <span class="derived-label">Estimated timeline</span>
+              <span class="derived-value" id="timelineOut">7 months</span>
+            </div>
+            <div class="derived-item">
+              <span class="derived-label">Estimated build</span>
+              <span class="derived-value" id="buildOut">$38k</span>
+            </div>
+            <div class="derived-item">
+              <span class="derived-label">Estimated drag</span>
+              <span class="derived-value" id="dragOut">1.4 hrs/wk</span>
+            </div>
+          </div>
+        </aside>
+      </div>
+
+      <div class="method">
+        <div class="method-item">
+          <h3>Cost</h3>
+          <p>SaaS savings are calculated from the share of subscription spend converted, with a conservative capture rate to account for tools that should stay.</p>
+        </div>
+        <div class="method-item">
+          <h3>Complexity</h3>
+          <p>The complexity score blends tool count, conversion target, and operating difficulty. It drives implementation effort and expected simplification.</p>
+        </div>
+        <div class="method-item">
+          <h3>Productivity</h3>
+          <p>Workflow drag is estimated from spend, tool count, team size, and complexity, then discounted so the model counts only practical, usable capacity.</p>
+        </div>
+      </div>
+    </section>
+
+    <footer class="foot">
+      <span>DeSaaS 12-month estimated conversion model · v0.4 · May 2026</span>
+      <span>Directional estimates only. Validate with actual invoices, usage, contracts, and workflow timing.</span>
+    </footer>
+  </main>
+
+  <script>
+    const $ = (id) => document.getElementById(id);
+    const levels = ["Very low", "Low", "Medium", "High", "Very high"];
+    const presets = {
+      baseline: { spend: 32000, tools: 24, team: 42, convert: 90 },
+      aggressive: { spend: 48000, tools: 32, team: 64, convert: 60 },
+      complex: { spend: 86000, tools: 58, team: 110, convert: 50 },
+      conservative: { spend: 18000, tools: 14, team: 22, convert: 30 }
+    };
+    const inputs = ["spend", "tools", "team", "convert"];
+    const STORAGE_KEY = "desaas_audit_v1";
+    let chart;
+
+    function money(value) {
+      const sign = value < 0 ? "-" : "";
+      const abs = Math.abs(value);
+      if (abs >= 1000000) return `${sign}$${(abs / 1000000).toFixed(1)}m`;
+      if (abs >= 1000) return `${sign}$${Math.round(abs / 1000)}k`;
+      return `${sign}$${Math.round(abs).toLocaleString()}`;
+    }
+
+    function readModel() {
+      return Object.fromEntries(inputs.map((key) => [key, Number($(key).value)]));
+    }
+
+    function applyModel(values) {
+      inputs.forEach((key) => {
+        if (values[key] !== undefined && values[key] !== null && !Number.isNaN(Number(values[key]))) {
+          $(key).value = Math.max(Number($(key).min), Math.min(Number($(key).max), Number(values[key])));
+        }
+      });
+    }
+
+    function loadLinkedState() {
+      const params = new URLSearchParams(window.location.search);
+      const paramValues = {
+        spend: params.get("spend"),
+        tools: params.get("tools"),
+        team: params.get("team"),
+        convert: params.get("convert")
+      };
+      const hasParams = Object.values(paramValues).some((value) => value !== null);
+      if (hasParams) {
+        applyModel(paramValues);
+        return;
+      }
+      try {
+        const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null");
+        if (!saved) return;
+        const estimates = saved.estimates || {};
+        const model = {
+          spend: estimates.spend || saved.seed?.spend,
+          tools: saved.tools?.length || saved.seed?.tools,
+          team: Math.round(estimates.seats || saved.seed?.team || saved.company?.employeeCountEstimate || 0),
+          convert: estimates.recommendedConversion || saved.seed?.convert
+        };
+        applyModel(model);
+      } catch {}
+    }
+
+    function auditUrl() {
+      const model = readModel();
+      const params = new URLSearchParams({
+        spend: String(Math.round(model.spend)),
+        tools: String(Math.round(model.tools)),
+        team: String(Math.round(model.team)),
+        convert: String(Math.round(model.convert))
+      });
+      return `/b/audit.html?${params.toString()}`;
+    }
+
+    function saveLinkedState(model, series, assumptions) {
+      try {
+        const existing = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}") || {};
+        const full = series[series.length - 1];
+        const payload = {
+          ...existing,
+          seed: { spend: model.spend, tools: model.tools, team: model.team, convert: model.convert },
+          estimates: {
+            ...(existing.estimates || {}),
+            spend: model.spend,
+            annualSpend: model.spend * 12,
+            seats: model.team,
+            toolCount: model.tools,
+            recommendedConversion: model.convert,
+            firstYearGain: full.cumulative,
+            buildBudget: assumptions.buildBudget,
+            pace: assumptions.pace
+          }
+        };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+      } catch {}
+    }
+
+    function conversionAt(month, target, pace) {
+      const start = 2;
+      if (month < start) return 0;
+      const t = Math.min(1, (month - start + 1) / pace);
+      return target * (1 - Math.pow(1 - t, 2.2));
+    }
+
+    function estimateComplexity(model) {
+      const spendPressure = Math.sqrt(model.spend / 10000) * 0.55;
+      const toolPressure = model.tools / 18;
+      const teamPressure = Math.sqrt(model.team / 35) * 0.85;
+      const scopePressure = model.convert / 42;
+      const score = spendPressure + toolPressure + teamPressure + scopePressure;
+      return Math.max(1, Math.min(5, Math.round(score / 1.55)));
+    }
+
+    function derivedAssumptions(model) {
+      const complexity = estimateComplexity(model);
+      const sizeScore = Math.sqrt(model.spend / 10000) + model.tools / 18 + model.team / 60;
+      const complexityLift = 0.65 + complexity * 0.11;
+      const target = model.convert / 100;
+      const pace = Math.max(3, Math.min(12, Math.round((2.2 + sizeScore * 0.95 + complexity * 0.55) * (0.72 + target * 0.42))));
+      const buildBudget = (8000 + model.tools * 650 + Math.sqrt(model.spend) * 95 + model.team * 110) * complexityLift * (0.45 + target * 0.55);
+      const drag = Math.max(0.45, Math.min(3.4, 0.35 + complexity * 0.22 + model.tools / Math.max(34, model.team * 1.25) + Math.sqrt(model.spend / 10000) * 0.18));
+      return { pace, buildBudget, drag, complexity };
+    }
+
+    function buildSeries(model) {
+      const months = Array.from({ length: 12 }, (_, i) => i + 1);
+      const target = model.convert / 100;
+      const assumptions = derivedAssumptions(model);
+      const buildBudget = assumptions.buildBudget;
+      const maintenanceFull = Math.max(750, buildBudget * 0.014);
+      const hourlyRate = 85;
+      const productiveCapture = 0.5;
+      const saasCapture = 0.82;
+      let cumulative = 0;
+
+      return months.map((month) => {
+        const conversion = conversionAt(month, target, assumptions.pace);
+        const spendAvoided = model.spend * conversion * saasCapture;
+        const productivity = model.team * assumptions.drag * 4.33 * hourlyRate * productiveCapture * conversion;
+        const buildInvestment = month <= assumptions.pace ? buildBudget / assumptions.pace : 0;
+        const maintenance = maintenanceFull * conversion;
+        const net = spendAvoided + productivity - buildInvestment - maintenance;
+        cumulative += net;
+        return { month, conversion, spendAvoided, productivity, buildInvestment, maintenance, net, cumulative, assumptions };
+      });
+    }
+
+    function calculate({ updateChart = true } = {}) {
+      const model = readModel();
+      const series = buildSeries(model);
+      const full = series[series.length - 1];
+      const assumptions = full.assumptions;
+      const payback = series.find((point) => point.cumulative > 0);
+      const complexityReduction = Math.round(model.convert * (0.62 + assumptions.complexity * 0.07));
+      const monthlyGainFull = full.spendAvoided + full.productivity - full.maintenance;
+
+      $("spendOut").textContent = money(model.spend);
+      $("toolsOut").textContent = model.tools;
+      $("complexityOut").textContent = levels[assumptions.complexity - 1];
+      $("teamOut").textContent = `${model.team} people`;
+      $("convertOut").textContent = `${model.convert}%`;
+      $("timelineOut").textContent = `${assumptions.pace} months`;
+      $("buildOut").textContent = money(assumptions.buildBudget);
+      $("dragOut").textContent = `${assumptions.drag.toFixed(1)} hrs/wk`;
+
+      $("stat-savings").textContent = money(monthlyGainFull);
+      $("stat-payback").textContent = payback ? `Month ${payback.month}` : ">12 mos";
+      $("stat-payback").className = `stat-value ${payback ? "" : "warn"}`;
+      $("stat-complexity").textContent = `${Math.min(78, complexityReduction)}%`;
+      $("stat-net").textContent = money(full.cumulative);
+      $("stat-net").className = `stat-value ${full.cumulative >= 0 ? "good" : "warn"}`;
+      $("insight").innerHTML = payback
+        ? `At the current settings, the estimated program reaches payback in <em>month ${payback.month}</em> and produces an estimated <em>${money(full.cumulative)}</em> in net gain by month 12.`
+        : `At the current settings, estimated payback lands after the 12-month horizon. The estimated month-12 position is <em>${money(full.cumulative)}</em>, so narrow the first conversion or pick a faster cancellation target.`;
+      $("auditLink").href = auditUrl();
+      saveLinkedState(model, series, assumptions);
+
+      if (!updateChart) return;
+
+      const data = {
+        labels: series.map((point) => `M${point.month}`),
+        datasets: [
+          { type: "bar", label: "SaaS spend avoided", data: series.map((p) => [0, p.spendAvoided]), backgroundColor: "#2f7d68", grouped: false, borderRadius: { topLeft: 0, topRight: 0, bottomLeft: 5, bottomRight: 5 }, borderSkipped: false, barThickness: 24, maxBarThickness: 28 },
+          { type: "bar", label: "Productivity gain", data: series.map((p) => [p.spendAvoided, p.spendAvoided + p.productivity]), backgroundColor: "#2d5f84", grouped: false, borderRadius: { topLeft: 5, topRight: 5, bottomLeft: 0, bottomRight: 0 }, borderSkipped: false, barThickness: 24, maxBarThickness: 28 },
+          { type: "bar", label: "Build investment", data: series.map((p) => [-p.buildInvestment, 0]), backgroundColor: "#b86f2d", grouped: false, borderRadius: { topLeft: 5, topRight: 5, bottomLeft: 0, bottomRight: 0 }, borderSkipped: false, barThickness: 24, maxBarThickness: 28 },
+          { type: "bar", label: "Maintenance", data: series.map((p) => [-p.buildInvestment - p.maintenance, -p.buildInvestment]), backgroundColor: "#694a78", grouped: false, borderRadius: { topLeft: 0, topRight: 0, bottomLeft: 5, bottomRight: 5 }, borderSkipped: false, barThickness: 24, maxBarThickness: 28 },
+          { type: "line", label: "Cumulative net", data: series.map((p) => p.cumulative), borderColor: "#9d3f35", backgroundColor: "#9d3f35", yAxisID: "y1", tension: 0.28, borderWidth: 3, pointRadius: 0, pointHoverRadius: 4 }
+        ]
+      };
+
+      if (!chart) {
+        chart = new Chart($("conversionChart"), {
+          data,
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: { mode: "index", intersect: false },
+            plugins: {
+              legend: { display: false },
+              tooltip: {
+                callbacks: {
+                  label: (item) => {
+                    const raw = Array.isArray(item.raw) ? item.raw[1] - item.raw[0] : item.raw;
+                    return `${item.dataset.label}: ${money(raw)}`;
+                  }
+                }
+              }
+            },
+            scales: {
+              x: {
+                grid: { display: false },
+                ticks: { color: "#58616d", maxTicksLimit: 12 }
+              },
+              y: {
+                title: { display: true, text: "Monthly impact", color: "#58616d" },
+                grid: { color: "rgba(16, 24, 32, 0.08)" },
+                ticks: { color: "#58616d", callback: money }
+              },
+              y1: {
+                position: "right",
+                title: { display: true, text: "Cumulative net", color: "#58616d" },
+                grid: { drawOnChartArea: false },
+                ticks: { color: "#58616d", callback: money }
+              }
+            }
+          }
+        });
+      } else {
+        chart.data = data;
+        chart.update();
+      }
+    }
+
+    function markCustomScenario() {
+      document.querySelectorAll(".preset").forEach((button) => button.classList.remove("active"));
+    }
+
+    inputs.forEach((id) => {
+      const input = $(id);
+      input.addEventListener("input", () => {
+        markCustomScenario();
+        calculate({ updateChart: false });
+      });
+      input.addEventListener("change", () => {
+        markCustomScenario();
+        calculate();
+      });
+      input.addEventListener("pointerup", () => calculate());
+      input.addEventListener("keyup", (event) => {
+        if (["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", "Home", "End", "PageUp", "PageDown"].includes(event.key)) calculate();
+      });
+    });
+
+    document.querySelectorAll(".preset").forEach((button) => {
+      button.addEventListener("click", () => {
+        const values = presets[button.dataset.preset];
+        Object.entries(values).forEach(([key, value]) => { $(key).value = value; });
+        document.querySelectorAll(".preset").forEach((preset) => preset.classList.toggle("active", preset === button));
+        calculate();
+      });
+    });
+
+    loadLinkedState();
+    calculate();
+  </script>
+</body>
+</html>
