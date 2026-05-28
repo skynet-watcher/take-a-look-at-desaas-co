@@ -23,6 +23,10 @@ const pageMeta = {
     title: "DeSaaS AI Onboarding | Start Your Operations Blueprint",
     description: "Start DeSaaS onboarding with an AI-guided intake that captures goals, tools, bottlenecks, and first workflow opportunities before the full workspace begins.",
   },
+  "/opportunity": {
+    title: "DeSaaS | Build The Operating Advantage Inside Your Workflows",
+    description: "A strategic DeSaaS preview focused on opportunity cost, AI-ready operations, owned workflows, and the competitive advantage of building around how your company actually works.",
+  },
   "/book-audit": {
     title: "Book a SaaS Audit | DeSaaS",
     description: "Share a little context and DeSaaS will identify the first practical place to simplify your software stack — from spend and overlap to workflow friction and renewal timing.",
@@ -53,6 +57,7 @@ const routes = {
   "/insights": renderInsights,
   "/calculator": renderCalculatorPage,
   "/onboarding": renderOnboardingPreview,
+  "/opportunity": renderOpportunityHome,
   "/book-audit": renderBookAudit,
 };
 
@@ -174,6 +179,7 @@ function header() {
     ["/use-cases", "Use Cases"],
     ["/insights", "Insights"],
     ["/onboarding", "AI Onboarding"],
+    ["/opportunity", "Opportunity"],
     ["/calculator", "Calculator"],
     ["/book-audit", "Book Audit"],
   ];
@@ -388,6 +394,164 @@ function renderNewHome() {
     ${aiReadySection()}
     ${previewConversionSection()}
   `);
+}
+
+function renderOpportunityHome() {
+  return pageShell(html`
+    <section class="container opportunity-hero">
+      <div class="opportunity-copy">
+        <span class="eyebrow">Strategic DeSaaS preview</span>
+        <h1>Build the operating advantage hiding inside your workflows.</h1>
+        <p class="lead">DeSaaS helps companies reduce software waste, simplify the stack, and turn repeated work into owned, AI-ready systems that compound over time.</p>
+        <p class="outcome-line">Your competitors cannot subscribe to the way your company works.</p>
+        <div class="actions">
+          <a class="button primary" href="/onboarding">Start AI onboarding</a>
+          <a class="button secondary" href="/calculator">Estimate the drag</a>
+        </div>
+      </div>
+      <div class="advantage-board" aria-label="DeSaaS strategic advantage map">
+        <div class="advantage-core">
+          <span class="brand-mark">De</span>
+          <strong>Owned operating layer</strong>
+          <small>workflow, data, AI assist, review</small>
+        </div>
+        <div class="advantage-node node-speed"><strong>Speed</strong><span>shorter handoffs</span></div>
+        <div class="advantage-node node-context"><strong>Context</strong><span>cleaner decisions</span></div>
+        <div class="advantage-node node-ai"><strong>AI leverage</strong><span>usable workflows</span></div>
+        <div class="advantage-node node-memory"><strong>Memory</strong><span>knowledge compounds</span></div>
+        <div class="advantage-node node-control"><strong>Control</strong><span>less vendor drift</span></div>
+        <div class="advantage-orbit orbit-a"></div>
+        <div class="advantage-orbit orbit-b"></div>
+      </div>
+    </section>
+    ${inefficiencyCostSection()}
+    ${opportunityCostSection()}
+    ${competitiveRealitySection()}
+    ${strategicDeSaaSSection()}
+    ${aiLegibilitySection()}
+    ${opportunityCtaSection()}
+  `);
+}
+
+function inefficiencyCostSection() {
+  const costs = [
+    ["Invoice cost", "Seats, renewals, overlapping tools, and features your team never needed."],
+    ["Navigation cost", "Time spent finding the right dashboard, record, owner, or latest version of the truth."],
+    ["Movement cost", "Exports, copy/paste, spreadsheet rollups, and repeated reconciliation between systems."],
+    ["Coordination cost", "Approvals, handoffs, and follow-ups that depend on memory instead of the workflow itself."]
+  ];
+  return html`
+    <section class="section">
+      <div class="container section-header">
+        <div>
+          <span class="eyebrow">The visible cost</span>
+          <h2>The invoice is only the part you can see.</h2>
+        </div>
+        <p>SaaS sprawl creates obvious spend, but the daily drag is usually larger: duplicated data, unclear ownership, brittle handoffs, and teams working around the tools they bought to help them.</p>
+      </div>
+      <div class="container grid four">${costs.map(card).join("")}</div>
+    </section>
+  `;
+}
+
+function opportunityCostSection() {
+  const upside = [
+    ["Decision speed", "Cleaner workflows and fewer handoffs let leaders see what is happening sooner."],
+    ["AI leverage", "Structured work creates safer places for AI to summarize, route, draft, extract, and reconcile."],
+    ["Operating memory", "Repeated work becomes a system the whole team can improve, not a habit trapped in one employee's head."],
+    ["Adaptability", "Owned workflows can change as the business changes instead of waiting on a vendor roadmap."]
+  ];
+  return html`
+    <section class="section opportunity-band">
+      <div class="container opportunity-split">
+        <div>
+          <span class="eyebrow">The opportunity cost</span>
+          <h2>Every month your workflows stay scattered, the advantage gets postponed.</h2>
+          <p class="lead">The companies going all in are not just saving money. They are shortening handoffs, improving decision speed, making AI safer to use, and turning operational knowledge into systems the whole team can build on.</p>
+        </div>
+        <div class="opportunity-stack">
+          ${upside.map(([title, body], index) => `<div class="advantage-card" style="--i:${index}"><h3>${title}</h3><p>${body}</p></div>`).join("")}
+        </div>
+      </div>
+    </section>
+  `;
+}
+
+function competitiveRealitySection() {
+  return html`
+    <section class="section">
+      <div class="container competitive-panel">
+        <span class="eyebrow">Competitive reality</span>
+        <h2>You are not just competing against better tools. You are competing against better operating systems.</h2>
+        <p class="lead">A competitor using the same SaaS stack is one thing. A competitor with owned workflows, clean context, and practical AI inside daily operations is playing a different game.</p>
+        <div class="competitive-rows">
+          <div><span>Generic SaaS</span><strong>Everyone can buy it</strong></div>
+          <div><span>Owned workflow</span><strong>Only your company can build it</strong></div>
+          <div><span>AI beside the work</span><strong>Another destination</strong></div>
+          <div><span>AI inside the workflow</span><strong>Compounding capability</strong></div>
+        </div>
+      </div>
+    </section>
+  `;
+}
+
+function strategicDeSaaSSection() {
+  const steps = [
+    ["Map the operating reality", "Find where the official process differs from how work actually gets done."],
+    ["Keep the tools that earn their place", "DeSaaS is not a rebuild-everything philosophy. Essential systems stay, but their role becomes clear."],
+    ["Own what makes the business distinct", "Build the focused operating layer around the workflows that drive speed, consistency, and customer experience."],
+    ["Compound from the first workflow", "Each owned workflow creates cleaner context for the next automation, report, and AI assistant."]
+  ];
+  return html`
+    <section class="section security-band">
+      <div class="container">
+        <div class="section-header">
+          <div>
+            <span class="eyebrow">What DeSaaS builds</span>
+            <h2>Not more software. A clearer operating layer.</h2>
+          </div>
+          <p>The goal is not fewer tools at all costs. The goal is fewer dependencies with better fit, clearer ownership, and workflows the business can actually evolve.</p>
+        </div>
+        <div class="process-list">${steps.map(([title, body]) => `<div class="process-item"><div><h3>${title}</h3><p>${body}</p></div></div>`).join("")}</div>
+      </div>
+    </section>
+  `;
+}
+
+function aiLegibilitySection() {
+  const cards = [
+    ["Clean inputs", "AI can only help when the system knows which data matters and where it came from."],
+    ["Clear permissions", "Practical AI needs boundaries: who can see, approve, change, and export what."],
+    ["Narrow jobs", "The safest first AI workflows summarize, route, draft, extract, reconcile, and escalate."],
+  ];
+  return html`
+    <section class="section">
+      <div class="container ai-panel">
+        <div>
+          <span class="eyebrow">AI-ready operations</span>
+          <h2>AI becomes useful when your operations are legible.</h2>
+          <p class="lead">The best AI systems are not magic layers on top of chaos. They need clean context, structured decisions, and human review points. DeSaaS makes the business legible enough for AI to help.</p>
+        </div>
+        <div class="grid three">${cards.map(card).join("")}</div>
+      </div>
+    </section>
+  `;
+}
+
+function opportunityCtaSection() {
+  return html`
+    <section class="section final-band">
+      <div class="container">
+        <span class="eyebrow">Start with one workflow</span>
+        <h2>Find the first workflow that can become an advantage.</h2>
+        <p class="lead">We will map the cost, friction, and strategic upside in your current stack, then show where DeSaaS should start.</p>
+        <div class="actions">
+          <a class="button primary" href="/onboarding">Start AI onboarding</a>
+          <a class="button secondary" href="/book-audit">Book a SaaS Audit</a>
+        </div>
+      </div>
+    </section>
+  `;
 }
 
 function hiddenCostSection() {
