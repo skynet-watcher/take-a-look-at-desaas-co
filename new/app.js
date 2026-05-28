@@ -380,7 +380,7 @@ function renderNewHome() {
     <section class="container hero">
       <div>
         <h1>Own your tools.</h1>
-        <p class="lead">SaaS fees are just the start. The hidden cost is the complexity your team has to navigate every day — and the operating advantage you fail to build while that complexity compounds.</p>
+        <p class="lead">SaaS fees are just the start. The real cost is what never gets built while your team works around the complexity.</p>
         <p class="outcome-line">Keep what works. Own the process around it.</p>
         ${previewCtas()}
         <p class="microcopy">Start with the tools, connections, and workflows creating the most operational drag.</p>
