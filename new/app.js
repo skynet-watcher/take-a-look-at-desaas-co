@@ -179,7 +179,6 @@ function header() {
     ["/use-cases", "Use Cases"],
     ["/insights", "Insights"],
     ["/onboarding", "AI Onboarding"],
-    ["/opportunity", "Opportunity"],
     ["/calculator", "Calculator"],
     ["/book-audit", "Book Audit"],
   ];
@@ -381,7 +380,7 @@ function renderNewHome() {
     <section class="container hero">
       <div>
         <h1>Own your tools.</h1>
-        <p class="lead">SaaS fees are just the start. The hidden cost is the complexity your team has to navigate every day.</p>
+        <p class="lead">SaaS fees are just the start. The hidden cost is the complexity your team has to navigate every day — and the operating advantage you fail to build while that complexity compounds.</p>
         <p class="outcome-line">Keep what works. Own the process around it.</p>
         ${previewCtas()}
         <p class="microcopy">Start with the tools, connections, and workflows creating the most operational drag.</p>
@@ -389,9 +388,10 @@ function renderNewHome() {
       ${pipelineAnimation()}
     </section>
     ${hiddenCostSection()}
+    ${opportunityCostSection()}
     ${connectionFrictionSection()}
     ${ownedSurfaceSection()}
-    ${aiReadySection()}
+    ${aiLegibilitySection()}
     ${previewConversionSection()}
   `);
 }
@@ -669,9 +669,9 @@ function previewConversionSection() {
   return html`
     <section class="section final-band">
       <div class="container">
-        <span class="eyebrow">Ready to start?</span>
-        <h2>Find the first workflow worth owning.</h2>
-        <p class="lead">Book a free audit and DeSaaS will map your stack, find the first opportunity, and show you exactly where to start.</p>
+        <span class="eyebrow">Start with one workflow</span>
+        <h2>Find the first workflow that can become an advantage.</h2>
+        <p class="lead">We will map the cost, friction, and strategic upside in your current stack, then show where DeSaaS should start.</p>
         ${previewCtas()}
       </div>
     </section>
@@ -770,17 +770,17 @@ function renderOnboardingPreview() {
           </form>
 
           <aside class="learning-panel">
-            <div class="readiness-ring" aria-label="Automation readiness score">
-              <strong data-readiness-score>22</strong>
-              <span>readiness</span>
+            <div class="skeleton-meta">
+              <span class="eyebrow">Operations skeleton</span>
+              <span class="confidence-badge"><strong data-readiness-score>22</strong>%</span>
             </div>
-            <div class="learning-list">
-              <div><span>Known company</span><strong data-known-company>Not yet</strong></div>
-              <div><span>Selected tools</span><strong data-known-tools>0</strong></div>
-              <div><span>Bottlenecks</span><strong data-known-bottlenecks>0</strong></div>
-              <div><span>Workflow hints</span><strong data-known-workflows>0</strong></div>
+            <div class="confidence-bar-wrap">
+              <div class="confidence-bar"><div class="confidence-fill" data-confidence-fill style="width:22%"></div></div>
             </div>
-            <p class="assistant-note" data-assistant-note>Tell us who you are and DeSaaS will start shaping the first onboarding path.</p>
+            <div class="skeleton-nodes" data-skeleton-nodes aria-live="polite">
+              <p class="skeleton-empty">Fill in your company details above and nodes will appear here.</p>
+            </div>
+            <p class="assistant-note" data-assistant-note>Tell us who you are and DeSaaS will start building your operations skeleton.</p>
           </aside>
         </div>
 
@@ -815,15 +815,33 @@ function renderOnboardingPreview() {
           </div>
         </div>
 
-        <div class="upload-strip">
-          <div>
-            <strong>Minimum viable onboarding</strong>
-            <p>Connect one tool, upload one document, and answer a five-question interview. More inputs improve the roadmap, but this is enough to start.</p>
+        <div class="honest-ask" data-honest-ask>
+          <div class="ask-row">
+            <div class="ask-confidence">
+              <span class="eyebrow">Skeleton confidence</span>
+              <div class="ask-score"><strong data-ask-readiness>22</strong><span>%</span></div>
+            </div>
+            <div class="ask-detail">
+              <div data-ask-needed-wrap>
+                <h3>To reach 80%</h3>
+                <ul data-ask-needed>
+                  <li>Select at least one tool</li>
+                  <li>Describe your main goal</li>
+                  <li>Name one core workflow</li>
+                </ul>
+              </div>
+              <div data-ask-unlocks-wrap class="ask-unlocks">
+                <h3>That unlocks</h3>
+                <ul data-ask-unlocks>
+                  <li>Tool-based workflow hints</li>
+                  <li>Full workflow map</li>
+                  <li>Three automation estimates</li>
+                </ul>
+              </div>
+            </div>
           </div>
-          <label class="upload-button">
-            <input type="file" multiple disabled />
-            SOP placeholder
-          </label>
+          <button class="button primary full-width" data-start-onboarding>Start my private onboarding</button>
+          <p class="ask-note">No account needed to start. Your skeleton is saved to this browser session.</p>
         </div>
       </div>
     </section>
@@ -1291,23 +1309,39 @@ function wireOnboardingPreview() {
 
   function syncOnboarding() {
     const readiness = calculateOnboardingReadiness(state);
-    const selectedTools = state.tools || [];
-    const selectedBottlenecks = state.bottlenecks || [];
-    const selectedWorkflows = state.workflows || [];
     const quickWins = onboardingQuickWins(state);
+    const nodes = buildSkeletonNodes(state);
+    const ask = buildHonestAsk(state, readiness);
 
     setText("[data-readiness-score]", readiness);
-    setText("[data-known-company]", state.company || "Not yet");
-    setText("[data-known-tools]", selectedTools.length);
-    setText("[data-known-bottlenecks]", selectedBottlenecks.length);
-    setText("[data-known-workflows]", selectedWorkflows.length);
+    setText("[data-ask-readiness]", readiness);
     setText("[data-assistant-note]", onboardingAssistantNote(state, readiness));
     setText("[data-snapshot-summary]", onboardingSnapshotSummary(state, readiness));
+
+    const fillEl = consoleEl.querySelector("[data-confidence-fill]");
+    if (fillEl) fillEl.style.width = `${readiness}%`;
+
+    const nodesEl = consoleEl.querySelector("[data-skeleton-nodes]");
+    if (nodesEl) {
+      if (nodes.length === 0) {
+        nodesEl.innerHTML = `<p class="skeleton-empty">Fill in your company details above and nodes will appear here.</p>`;
+      } else {
+        nodesEl.innerHTML = nodes.map(renderSkeletonNode).join("");
+      }
+    }
 
     const quickWinList = consoleEl.querySelector("[data-quick-wins]");
     if (quickWinList) {
       quickWinList.innerHTML = quickWins.map((win) => `<li>${escapeHtmlInline(win)}</li>`).join("");
     }
+
+    const neededList = consoleEl.querySelector("[data-ask-needed]");
+    const unlocksList = consoleEl.querySelector("[data-ask-unlocks]");
+    if (neededList) neededList.innerHTML = ask.needed.map((n) => `<li>${escapeHtmlInline(n)}</li>`).join("");
+    if (unlocksList) unlocksList.innerHTML = ask.unlocks.map((u) => `<li>${escapeHtmlInline(u)}</li>`).join("");
+
+    const neededWrap = consoleEl.querySelector("[data-ask-needed-wrap]");
+    if (neededWrap) neededWrap.style.display = ask.needed.length ? "" : "none";
 
     consoleEl.style.setProperty("--readiness", readiness);
     localStorage.setItem(storageKey, JSON.stringify(state));
@@ -1319,6 +1353,96 @@ function wireOnboardingPreview() {
   }
 
   syncOnboarding();
+}
+
+function buildSkeletonNodes(state) {
+  const nodes = [];
+  if (state.company) {
+    nodes.push({ id: "org", label: state.company, type: "Organization", nodeState: "confirmed", source: "entered by you" });
+  }
+  if (state.website) {
+    nodes.push({ id: "web", label: state.website, type: "Web presence", nodeState: "inferred", source: "website scan" });
+  }
+  const toolNodes = {
+    "HubSpot": "CRM · sales pipeline",
+    "Pipedrive": "CRM · sales pipeline",
+    "Salesforce": "CRM · sales pipeline",
+    "QuickBooks": "Finance · invoicing",
+    "Xero": "Finance · invoicing",
+    "Zendesk": "Support workflow",
+    "Slack": "Team communications",
+    "Teams": "Team communications",
+    "Google Workspace": "Docs · email · calendar",
+    "Microsoft 365": "Docs · email · calendar",
+    "ClickUp": "Project management",
+    "Asana": "Project management",
+    "Airtable": "Data · operations",
+    "Notion": "Docs · knowledge base",
+    "Shopify": "E-commerce · orders",
+  };
+  (state.tools || []).forEach((tool) => {
+    nodes.push({ id: `tool-${tool}`, label: tool, type: toolNodes[tool] || "Tool", nodeState: "inferred", source: "tool selection" });
+  });
+  const bottleneckNodes = {
+    "Manual data entry": "Data entry workflow",
+    "Sales handoffs": "Sales handoff workflow",
+    "Client onboarding": "Client onboarding workflow",
+    "Reporting": "Reporting workflow",
+    "Support triage": "Support triage workflow",
+    "Invoice follow-up": "Collections workflow",
+    "SOP gaps": "Process documentation",
+    "Project coordination": "Project handoff workflow",
+  };
+  (state.bottlenecks || []).forEach((b) => {
+    const label = bottleneckNodes[b];
+    if (label && !nodes.find((n) => n.label === label)) {
+      nodes.push({ id: `bn-${b}`, label, type: "Workflow", nodeState: "inferred", source: `bottleneck: ${b.toLowerCase()}` });
+    }
+  });
+  (state.workflows || []).forEach((w) => {
+    const existing = nodes.find((n) => n.label.toLowerCase().includes(w.toLowerCase().split(" ")[0]));
+    if (existing) {
+      existing.nodeState = "confirmed";
+    } else {
+      nodes.push({ id: `wf-${w}`, label: w, type: "Workflow", nodeState: "confirmed", source: "named by you" });
+    }
+  });
+  return nodes;
+}
+
+function renderSkeletonNode({ label, type, nodeState, source }) {
+  const dot = nodeState === "confirmed" ? "●" : "○";
+  const cls = nodeState === "confirmed" ? "node-confirmed" : "node-inferred";
+  return `<div class="skeleton-node ${cls}">
+    <span class="node-dot" aria-hidden="true">${dot}</span>
+    <div class="node-body">
+      <strong>${escapeHtmlInline(label)}</strong>
+      <span class="node-meta">${escapeHtmlInline(type)} · ${escapeHtmlInline(source)}</span>
+    </div>
+  </div>`;
+}
+
+function buildHonestAsk(state, readiness) {
+  if (readiness >= 80) {
+    return {
+      needed: [],
+      unlocks: ["private workspace with your skeleton pre-loaded", "SOP upload and document parsing", "tool connections and integration discovery", "role-based employee interviews"],
+    };
+  }
+  const needed = [];
+  const unlocks = [];
+  if (!(state.tools || []).length) { needed.push("select at least one tool (2 min)"); unlocks.push("tool-based workflow hints"); }
+  if (!state.outcome) { needed.push("describe your main goal (1 min)"); unlocks.push("targeted automation path"); }
+  if (!(state.workflows || []).length) { needed.push("name one core workflow (1 min)"); unlocks.push("workflow-specific quick wins"); }
+  if (!state.website) { needed.push("share your website URL (30 sec)"); unlocks.push("business context and industry signals"); }
+  if (!needed.length && readiness >= 60) {
+    return {
+      needed: [],
+      unlocks: ["private workspace with your skeleton pre-loaded", "SOP upload and document parsing", "tool connections and integration discovery"],
+    };
+  }
+  if (!unlocks.length) unlocks.push("full workflow map", "three automation estimates");
+  return { needed, unlocks };
 }
 
 function safeJson(value) {
@@ -1352,28 +1476,31 @@ function onboardingAssistantNote(state, readiness) {
 function onboardingSnapshotSummary(state, readiness) {
   const company = state.company || "this company";
   if (readiness >= 76) {
-    return `${company} is ready for the full onboarding sequence: SOP upload, read-only tool discovery, role-based interviews, workflow capture, and a reviewed automation roadmap.`;
+    return `${company} is ready for the full onboarding sequence. DeSaaS will map costs, friction, and strategic upside across the stack — then build a prioritised roadmap of workflows that can become owned operating advantages.`;
   }
   if ((state.bottlenecks || []).length) {
-    return `${company} is showing early automation signals around ${(state.bottlenecks || []).slice(0, 2).join(" and ")}. The next step is to map one workflow and connect the source-of-truth tools.`;
+    const bns = (state.bottlenecks || []).slice(0, 2).join(" and ");
+    return `${company} is showing early signals around ${bns}. The next step is to map one workflow end to end and identify whether the bottleneck is an efficiency problem, a strategic gap, or both.`;
   }
-  return "DeSaaS is ready to build a preliminary profile from the client's website intake, then continue with SOP upload, tool connections, employee interviews, and workflow capture after signup.";
+  return "DeSaaS looks for two things in parallel: where the stack is creating drag today, and where fixing it would create a compounding operational advantage. Fill in the details above to start the picture.";
 }
 
 function onboardingQuickWins(state) {
   const wins = [];
   const tools = state.tools || [];
   const bottlenecks = state.bottlenecks || [];
-  if (bottlenecks.includes("Manual data entry")) wins.push("Trace repeated copy/paste paths between tools and score them for automation.");
-  if (bottlenecks.includes("Client onboarding")) wins.push("Map the first customer handoff from closed deal to kickoff.");
-  if (bottlenecks.includes("Reporting")) wins.push("Identify recurring reports that can be generated from existing source systems.");
-  if (tools.includes("HubSpot") || tools.includes("Pipedrive")) wins.push("Review CRM stage changes, follow-ups, and sales-to-delivery handoffs.");
-  if (tools.includes("QuickBooks") || tools.includes("Xero")) wins.push("Trace invoice creation, approval, and collection reminders.");
+  if (bottlenecks.includes("Manual data entry")) wins.push("Trace repeated copy/paste paths and score them for automation impact.");
+  if (bottlenecks.includes("Client onboarding")) wins.push("Map the first customer handoff — this is often the highest-ROI workflow to own.");
+  if (bottlenecks.includes("Reporting")) wins.push("Identify reports that could run from source systems instead of spreadsheet rollups.");
+  if (bottlenecks.includes("Sales handoffs")) wins.push("Find where sales-to-delivery context gets lost and quantify the rework cost.");
+  if (tools.includes("HubSpot") || tools.includes("Pipedrive")) wins.push("Review CRM stage changes and handoffs — clean pipeline data is an AI-readiness asset.");
+  if (tools.includes("QuickBooks") || tools.includes("Xero")) wins.push("Trace invoice creation to collections — finance workflows compound quickly when automated.");
   if (!wins.length) {
-    wins.push("Upload SOPs and compare documented work against actual work.");
-    wins.push("Map one revenue or onboarding workflow end to end.");
-    wins.push("Connect the first source-of-truth system in read-only mode.");
+    wins.push("Upload one SOP and compare the documented process against how work actually happens.");
+    wins.push("Map one revenue workflow end to end and identify where the handoffs break down.");
+    wins.push("Connect the first source-of-truth system in read-only mode to see what the data reveals.");
   }
+  wins.push("Identify one workflow where speed or consistency would create a strategic advantage over the next 12 months.");
   return wins.slice(0, 4);
 }
 
