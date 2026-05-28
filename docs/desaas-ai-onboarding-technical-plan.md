@@ -18,6 +18,51 @@ For a small or medium business, DeSaaS will:
 - Produce a prioritized automation roadmap and implementation plan.
 - Power the transition from discovery into deployed AI agents and workflow automations.
 
+## Architecture Philosophy: Client Sovereignty
+
+DeSaaS sells intelligence, not custody. The client should progressively own more of their own infrastructure as trust deepens and the product matures.
+
+This is a core architectural constraint, not a feature. Every technical decision should be compatible with the full sovereignty end state.
+
+### The Ownership Ladder
+
+```
+Stage 5 │ Fully Sovereign      Client runs everything, DeSaaS is pure software / open-source core
+Stage 4 │ Infrastructure       Client's own cloud account (AWS/Azure/GCP), DeSaaS deploys software there
+Stage 3 │ AI Sovereign         Client's own AI API keys, prompts never touch DeSaaS servers
+Stage 2 │ Storage Sovereign    Client's own S3/blob, heavy data never stored by DeSaaS
+Stage 1 │ Data Transparent     Hosted by DeSaaS, but fully exportable and auditable at all times
+Stage 0 │ Hosted SaaS          DeSaaS hosts everything (launch state)
+```
+
+Each stage is available as an unlock for clients who need it — not a forced migration path. The architecture must support Stage 4 from day one even if the product ships at Stage 0.
+
+### What DeSaaS Retains at Every Stage
+
+Even at full client sovereignty, DeSaaS charges for:
+
+- The software license.
+- The AI orchestration intelligence — prompts, schemas, scoring logic.
+- The automation pattern library.
+- The roadmap generation engine.
+- Managed services and support.
+- The consultant console.
+
+The data layer is the client's. The intelligence layer is ours.
+
+### Phasing the Ownership Ladder Into the Build
+
+| Build Phase | Ownership Stage to Introduce |
+|---|---|
+| Phase 1–2 | Stage 0: Hosted SaaS, architected for the full ladder |
+| Phase 2–3 | Stage 1: Full data export and audit log surfaced to client |
+| Phase 3–4 | Stage 2: Bring Your Own Storage for documents and recordings |
+| Phase 4–5 | Stage 3: Bring Your Own AI Keys, provider abstraction layer |
+| Phase 6 | Stage 4: BYOC infrastructure-as-code deployment option |
+| Phase 7+ | Stage 5: Open-source core consideration |
+
+---
+
 ## Experience Layers
 
 ### 1. Public Website Intelligence Layer
@@ -43,11 +88,11 @@ Captured signals:
 
 Website AI interactions:
 
-- “What are you trying to automate?”
-- “What tools does your team currently use?”
-- “Where does work get stuck?”
-- “Do you have SOPs, spreadsheets, or templates we can review?”
-- “Would you like an initial automation opportunity snapshot?”
+- "What are you trying to automate?"
+- "What tools does your team currently use?"
+- "Where does work get stuck?"
+- "Do you have SOPs, spreadsheets, or templates we can review?"
+- "Would you like an initial automation opportunity snapshot?"
 
 The website should offer a low-friction first value moment:
 
@@ -55,7 +100,7 @@ The website should offer a low-friction first value moment:
 - Short AI interview.
 - Tool stack intake.
 - Optional SOP upload.
-- Generated “Automation Readiness Snapshot.”
+- Generated "Automation Readiness Snapshot."
 
 This snapshot should be useful but incomplete, nudging the client toward signup for deeper onboarding.
 
@@ -78,17 +123,27 @@ Workspace entities:
 - Recommendations.
 - Implementation roadmap.
 
-Signup should preserve everything already learned from the website session.
+Signup must preserve everything already learned from the website session. The first post-signup screen shows the client what DeSaaS already knows about them — not a blank workspace. The `prospect_sessions` record links to the new `organizations` record at conversion time.
 
 Initial post-signup flow:
 
-1. Confirm company profile.
+1. Confirm company profile — pre-filled from website session.
 2. Identify primary onboarding owner.
 3. Select departments to onboard.
 4. Invite key employees.
 5. Upload documents.
 6. Connect tools.
 7. Schedule or launch guided workflow capture.
+
+### Minimum Viable Onboarding Path
+
+Not every client will complete the full onboarding flow immediately. The system must be able to generate a first-draft roadmap from the minimum viable input:
+
+1. Connect one tool.
+2. Upload one document.
+3. Answer a five-question interview.
+
+Every additional input improves the roadmap. This minimum path must always be available and clearly communicated during signup. The onboarding dashboard should show what each additional data source unlocks, not just what is missing.
 
 ### 3. Document Intelligence Layer
 
@@ -128,9 +183,9 @@ Extraction outputs:
 
 The AI should compare documents against later observed behavior and flag mismatches:
 
-- “The SOP says sales creates the project, but screen capture shows operations creates it.”
-- “The checklist includes approval, but no approval appeared in the observed workflow.”
-- “The spreadsheet appears to be the real source of truth, not the CRM.”
+- "The SOP says sales creates the project, but screen capture shows operations creates it."
+- "The checklist includes approval, but no approval appeared in the observed workflow."
+- "The spreadsheet appears to be the real source of truth, not the CRM."
 
 ### 4. Tool Connection Layer
 
@@ -177,6 +232,18 @@ Integration discovery should collect:
 
 The integration layer should eventually support write actions, but only after the client approves specific automations.
 
+#### Integration Approval Reality
+
+OAuth is not a simple step for many clients. The onboarding flow must account for these realities:
+
+- Microsoft 365 requires admin consent at the Azure AD tenant level. An individual employee cannot authorize it.
+- Google Workspace with domain-wide delegation requires IT admin setup.
+- Slack Enterprise Grid requires org-level tokens, not workspace-level.
+- Enterprise clients often have allowlists of approved OAuth apps. Approval can take days or weeks.
+- SSO/SAML is not covered by standard OAuth and must be handled separately for enterprise workspaces.
+
+An "Integration Readiness" step should appear during onboarding for each connector, telling the onboarding owner upfront which integrations require IT admin involvement. Where IT approval is required, the system should generate a ready-made request the onboarding owner can forward to IT, including the specific permissions being requested and why.
+
 ### 5. Employee Interview Layer
 
 The product should interview employees differently based on role and observed workflow context.
@@ -196,13 +263,26 @@ The interview engine should use previous client context so it does not ask gener
 
 Example:
 
-If document parsing finds a “New Customer Onboarding SOP,” the system should ask the customer success lead:
+If document parsing finds a "New Customer Onboarding SOP," the system should ask the customer success lead:
 
-- “Is this still current?”
-- “Which steps usually get skipped?”
-- “What is the most common exception?”
-- “Where do you wait on another person?”
-- “What do you copy manually between tools?”
+- "Is this still current?"
+- "Which steps usually get skipped?"
+- "What is the most common exception?"
+- "Where do you wait on another person?"
+- "What do you copy manually between tools?"
+
+#### Employee Invite Experience
+
+The employee-facing experience is a separate, simplified view with no login friction. Access is via magic link or token URL — no account creation required.
+
+The first screen must explain:
+
+- Who invited them and why.
+- What they will be asked.
+- How long it will take (target: under 15 minutes).
+- What happens with their answers.
+
+The employee invite experience should feel completely separate from the DeSaaS admin product.
 
 ### 6. Workflow Observation Layer
 
@@ -241,14 +321,24 @@ Privacy controls:
 
 The AI should ask contextual clarification questions after a workflow session:
 
-- “You copied the client name from email into the CRM. Is email always the source?”
-- “You waited on a Slack reply before continuing. Who approves this step?”
-- “You changed the invoice amount manually. What determines that value?”
-- “This task took 14 minutes. How often do you do it?”
+- "You copied the client name from email into the CRM. Is email always the source?"
+- "You waited on a Slack reply before continuing. Who approves this step?"
+- "You changed the invoice amount manually. What determines that value?"
+- "This task took 14 minutes. How often do you do it?"
+
+#### Graceful Degradation for Restricted Environments
+
+Many clients operate on managed devices (Intune, Jamf, MDM). Chrome extensions require IT policy approval. macOS screen recording requires explicit Accessibility and Screen Recording permissions. Corporate environments may block unsigned desktop apps.
+
+Capture capability must degrade gracefully. If the extension cannot be installed or the desktop recorder cannot get permissions, the system falls back automatically to meeting recorder and manual workflow builder — zero friction, no dead ends. The onboarding dashboard shows what is currently capturable in this client's environment.
+
+#### Chrome Extension Technical Constraints
+
+The browser extension must be built for Manifest V3. Capabilities planned for Phase 2 must be validated against MV3 restrictions before commitment. Rich form field capture and network request interception require `debugger` permission which displays a visible security warning banner in Chrome — evaluate whether this is acceptable for the intended use case before shipping.
 
 ### 7. Process Graph Layer
 
-The platform should maintain a canonical graph of the client’s operations.
+The platform should maintain a canonical graph of the client's operations.
 
 Primary objects:
 
@@ -275,7 +365,7 @@ Example relationship:
 
 `Lead Form -> creates Contact in HubSpot -> Sales qualifies -> Proposal generated -> Client signs -> Project created in ClickUp -> Invoice created in QuickBooks -> Onboarding email sent`
 
-This graph becomes the source of truth for roadmap generation, future automations, and the client’s AI assistant.
+This graph becomes the source of truth for roadmap generation, future automations, and the client's AI assistant.
 
 ### 8. Automation Opportunity Engine
 
@@ -334,21 +424,25 @@ Views:
 
 This is where DeSaaS turns onboarding into sales momentum.
 
+---
+
 ## Recommended Technical Architecture
+
+### Architecture Decision: Separate Backend Service
+
+The backend is a dedicated Node.js service, not Next.js API routes. The Next.js app handles the frontend and the public-facing AI intake only. The backend service handles all business logic, background processing, webhook ingestion, OAuth callbacks, and AI orchestration. This is a firm decision — retrofitting a separate service boundary after build is expensive.
 
 ### Frontend
 
-Use Next.js with React and TypeScript.
-
-Recommended stack:
+Stack:
 
 - Next.js App Router.
 - React.
 - TypeScript.
 - Tailwind CSS.
 - shadcn/ui for components.
-- React Flow for workflow/process maps.
-- TanStack Query or SWR for client data fetching.
+- React Flow for workflow and process maps.
+- TanStack Query for client data fetching.
 - Zod for validation.
 - Vercel for hosting.
 
@@ -357,29 +451,30 @@ Primary frontend apps:
 - Public website.
 - AI website intake assistant.
 - Client onboarding portal.
-- Internal DeSaaS admin console.
+- Employee interview experience (separate simplified view).
+- Internal DeSaaS admin and consultant console.
 - Workflow map viewer.
 - Document review workspace.
 - Automation roadmap workspace.
 
 ### Backend
 
-Recommended stack:
+Stack:
 
-- Next.js API routes or a separate Node.js service.
+- Node.js service (separate from Next.js).
 - TypeScript.
-- Postgres.
-- Prisma or Drizzle ORM.
-- Background job system.
-- Object storage.
-- Queue-based processing.
-- Webhook ingestion for integrations.
+- Postgres with Row-Level Security.
+- Drizzle ORM (lightweight, good TypeScript types, easier to migrate later).
+- Inngest for background jobs and event-driven workflows.
+- S3-compatible object storage.
+- Redis for queues and session caching.
+- Webhook ingestion layer with idempotency keys.
 
 Core backend services:
 
 - Identity and workspace service.
 - Prospect/session tracking service.
-- AI conversation service.
+- AI orchestration service (provider-abstracted, see AI Layer below).
 - Document ingestion service.
 - Integration service.
 - Workflow capture ingestion service.
@@ -387,12 +482,19 @@ Core backend services:
 - Opportunity scoring service.
 - Roadmap generation service.
 - Notification service.
+- Data export service.
+
+### Multi-Tenancy: Hard Requirement
+
+Every table has an `organization_id` foreign key. Postgres Row-Level Security policies enforce tenant isolation at the database layer, not only in application code. The Drizzle query client is initialized with a tenant context so cross-tenant reads are structurally impossible, not just conventionally avoided.
+
+This is non-negotiable from day one. Retrofitting multi-tenancy on a live product is a data breach waiting to happen.
 
 ### Data Storage
 
-Use Postgres as the system of record.
+Postgres is the system of record.
 
-Use object storage for:
+Object storage for:
 
 - Uploaded documents.
 - Screen recordings.
@@ -400,15 +502,11 @@ Use object storage for:
 - Generated reports.
 - Extracted artifacts.
 
-Use vector search for:
+Raw screen recordings are stored with a 90-day default retention, configurable per organization. The durable record is the processed artifact: transcript, OCR summary, annotated workflow object. Clients may delete raw recordings after review. This keeps storage costs bounded.
 
-- SOP retrieval.
-- Interview context.
-- Client knowledge base.
-- Similar workflow matching.
-- Automation pattern retrieval.
+Vector search uses pgvector as a Postgres extension. Embeddings are organization-scoped by design — no cross-tenant vector space. Tables: `document_embeddings`, `workflow_embeddings`, `interview_embeddings`. Adding a dedicated vector database is deferred until Postgres query performance becomes a constraint.
 
-Use a graph-friendly schema in Postgres first. Add a dedicated graph database only if relationship queries become painful.
+Graph queries use an adjacency list pattern with recursive CTEs. `process_graph_nodes` and `process_graph_edges` are designed from day one to support recursive ancestor/descendant traversal. If query complexity grows, a closure table can be added without changing the base schema.
 
 ### AI Layer
 
@@ -427,7 +525,29 @@ AI responsibilities:
 - Roadmap drafting.
 - Internal consultant copilot.
 
-Use structured outputs wherever possible. The AI should not just produce prose; it should produce validated workflow objects, process steps, scores, and recommendations.
+Use structured outputs wherever possible. The AI should produce validated workflow objects, process steps, scores, and recommendations — not prose.
+
+#### AI Provider Abstraction
+
+The AI service is built behind a provider interface from day one:
+
+```typescript
+interface AIProvider {
+  complete(prompt: Prompt, schema: Schema, credential: Credential): Promise<StructuredOutput>
+}
+```
+
+Supported providers: Anthropic, OpenAI, Azure OpenAI (for clients with EU data residency requirements). The credential context comes from the organization's settings — either a DeSaaS-managed key (Stage 0) or the client's own API key (Stage 3).
+
+This abstraction costs almost nothing to build upfront and unlocks the AI Sovereign ownership stage without a rewrite.
+
+#### AI Cost Management
+
+AI operations are async and queued through Inngest. No synchronous AI calls on request paths except the website intake conversation. Per-organization AI usage is tracked in `usage_events` from day one. Cost controls and rate limits are configurable per subscription tier. Document parsing and session summarization run in background jobs with retry logic and failure notifications.
+
+#### Prompt and Schema Versioning
+
+All AI prompts and output schemas are version-controlled. Each AI-derived object records which prompt version produced it. This allows re-running extractions when prompts improve without losing the original artifact.
 
 Example structured workflow object:
 
@@ -447,7 +567,8 @@ Example structured workflow object:
   ],
   "exceptions": [],
   "missingInformation": [],
-  "confidence": 0.82
+  "confidence": 0.82,
+  "promptVersion": "workflow-extraction-v3"
 }
 ```
 
@@ -462,28 +583,30 @@ Phase 1:
 
 Phase 2:
 
-- Chrome extension.
-- Event capture for browser workflows.
+- Chrome extension (Manifest V3).
+- Event capture for browser workflows within MV3 constraints.
 - Domain/app allowlists.
 - Local redaction controls.
+- Graceful fallback if extension cannot be installed.
 
 Phase 3:
 
-- Desktop app using Electron or Tauri.
+- Desktop app using Tauri (preferred over Electron for binary size and security surface).
 - Cross-application workflow capture.
 - OCR.
 - App switching detection.
 - Sensitive app exclusion.
+- macOS and Windows permission handling with user-facing guidance.
 
 ### Integrations Architecture
 
 Start with OAuth integrations and read-only data discovery.
 
-Build an integration abstraction:
+Integration abstraction:
 
 - Provider.
 - Connection.
-- Credential.
+- Credential (stored in abstracted secrets layer — supports DeSaaS Vault or client's own AWS Secrets Manager).
 - Sync job.
 - External object.
 - External event.
@@ -503,65 +626,108 @@ Normalize across tools:
 - Calendar event.
 - User.
 
-This allows DeSaaS to reason across fragmented SMB tool stacks.
+Webhook ingestion uses idempotency keys to handle duplicate delivery. Retry logic is handled by Inngest. Failed syncs are surfaced to the onboarding dashboard, not silently dropped.
 
 ### Security And Trust
 
-Security must be part of the product experience, not buried in legal text.
+Security is part of the product experience.
 
 Requirements:
 
-- Organization-based access control.
+- Organization-based access control enforced at the database layer (Postgres RLS).
 - Role-based permissions.
-- Audit logs.
-- Encrypted credentials.
+- Full audit log surfaced to the client — not just internal.
+- Credentials stored in an abstracted secrets layer.
 - Encrypted object storage.
 - Clear recording consent.
-- Read-only discovery mode.
+- Read-only discovery mode by default.
 - Domain/app exclusions for screen capture.
 - Field redaction.
-- Data retention controls.
+- Data retention controls configurable per organization.
 - Human approval before write automations.
 - Admin review before reports are shared broadly.
 
-## Data Model Draft
+#### Data Residency And Compliance Path
+
+DeSaaS does not pursue HIPAA or SOC 2 certifications in Phase 1, but the architecture must not make them impossible later. Requirements:
+
+- Data is stored in a documented region (start: us-east-1).
+- A data processing agreement template is available at signup.
+- Clients in regulated industries are told upfront what compliance certifications are and are not in place.
+- The BYOC deployment path (Stage 4) is the compliance answer for clients who cannot use shared infrastructure.
+
+#### Client Data Ownership And Offboarding
+
+All tables have a `deleted_at` soft-delete column. A data export job produces a full portable archive of everything DeSaaS has captured for an organization: process graph, interview transcripts, documents, recommendations, audit log. Hard-delete cascade runs after a configurable retention period post-cancellation.
+
+GDPR right-to-erasure requests are handled through the hard-delete path.
+
+---
+
+## Data Model
 
 Core tables:
 
-- organizations
-- organization_profiles
-- users
-- memberships
-- prospect_sessions
-- website_events
-- conversations
-- conversation_messages
-- documents
-- document_chunks
-- extracted_processes
-- integrations
-- integration_connections
-- integration_objects
-- departments
-- roles
-- employees
-- workflows
-- workflow_steps
-- workflow_runs
-- workflow_recordings
-- interview_sessions
-- interview_answers
-- process_graph_nodes
-- process_graph_edges
-- automation_opportunities
-- automation_roadmaps
-- roadmap_items
-- approvals
-- audit_events
+- `organizations`
+- `organization_profiles`
+- `users`
+- `memberships`
+- `subscriptions`
+- `usage_events`
+- `billing_periods`
+- `prospect_sessions`
+- `website_events`
+- `conversations`
+- `conversation_messages`
+- `documents`
+- `document_chunks`
+- `document_embeddings`
+- `extracted_processes`
+- `integrations`
+- `integration_connections`
+- `integration_credentials` (abstracted secrets layer reference)
+- `integration_objects`
+- `integration_webhook_events`
+- `departments`
+- `roles`
+- `employees`
+- `workflows`
+- `workflow_versions`
+- `workflow_steps`
+- `workflow_runs`
+- `workflow_recordings`
+- `workflow_embeddings`
+- `interview_sessions`
+- `interview_answers`
+- `interview_embeddings`
+- `process_graph_nodes`
+- `process_graph_edges`
+- `automation_opportunities`
+- `source_evidence`
+- `automation_roadmaps`
+- `roadmap_items`
+- `approvals`
+- `audit_events`
+- `data_exports`
+- `ai_usage_events`
 
-Important design choice:
+### Key Design Decisions
 
-Keep raw source artifacts separate from AI-derived objects. Every workflow or recommendation should point back to source evidence such as a document, interview answer, integration event, or screen session.
+**Tenant isolation:** Every table has `organization_id` as a non-nullable foreign key. Postgres RLS policies enforce this at the database layer.
+
+**Source attribution:** `source_evidence` is a join table connecting any AI-derived object back to the evidence that produced it: `(subject_type, subject_id, source_type, source_id)` where `source_type` is one of `document`, `interview_answer`, `integration_event`, `workflow_recording`. Every automation opportunity, workflow extraction, and roadmap item must have at least one source evidence record.
+
+**Workflow versioning:** `workflow_versions` stores immutable snapshots of `workflows` records. The current canonical version is a foreign key on `workflows`. When a process changes or when observed behavior contradicts an existing SOP, a new version is created — the old version is preserved.
+
+**Soft delete:** All tables have `deleted_at` nullable timestamp. Hard deletes are reserved for the offboarding export/purge job.
+
+**Secrets abstraction:** `integration_credentials` stores a reference to a secrets backend, not the credential itself. The backend is configurable per organization: DeSaaS-managed Vault (Stage 0–3) or the client's own AWS Secrets Manager / Azure Key Vault (Stage 4).
+
+**Billing hooks:** `subscriptions`, `usage_events`, and `billing_periods` are in the model from day one. Billing is not built in Phase 1 but retrofitting it on a live schema is painful.
+
+**Keep raw artifacts separate from AI-derived objects.** Every workflow, recommendation, or extraction points back to a source evidence record. AI output is never the canonical record — the source artifact always is.
+
+---
 
 ## First Build: Website Intelligence And Pre-Onboarding
 
@@ -629,7 +795,9 @@ Build a Next.js website with:
 - Prospect profile persistence.
 - Admin view of captured prospects.
 
-For the first version, the readiness snapshot can be generated from deterministic rules plus AI-written summary. This keeps cost and complexity low while still feeling intelligent.
+For the first version, the readiness snapshot can be generated from deterministic rules plus AI-written summary.
+
+---
 
 ## Suggested Implementation Phases
 
@@ -637,14 +805,17 @@ For the first version, the readiness snapshot can be generated from deterministi
 
 Deliverables:
 
-- Technical architecture.
-- Data model.
+- Technical architecture (this document).
+- Data model with tenant isolation and ownership ladder compatibility confirmed.
 - Onboarding flow.
-- AI prompt and schema designs.
+- AI prompt and schema designs — all major AI operations, not just the three example schemas.
 - Website wireframe.
-- Security assumptions.
+- Security assumptions and compliance path documentation.
+- Background job topology (Inngest flows for each async operation).
 
 ### Phase 1: Website Pre-Onboarding MVP
+
+Ownership stage introduced: Stage 0 (Hosted SaaS, architected for the full ladder).
 
 Deliverables:
 
@@ -656,31 +827,43 @@ Deliverables:
 - Automation Readiness Snapshot.
 - Signup/booking CTA.
 - Internal prospect review page.
+- Postgres schema with RLS and multi-tenancy enforced from first migration.
 
 ### Phase 2: Client Workspace MVP
+
+Ownership stage introduced: Stage 1 (Data Transparent — full export and audit log surfaced to client).
 
 Deliverables:
 
 - Auth.
 - Organization workspace.
-- Document upload.
-- Basic document parsing.
+- Prospect-to-workspace handoff: pre-fills from website session, client sees what DeSaaS already knows.
+- Document upload with BYOS option for organizations that want it.
+- Basic document parsing via async Inngest job.
 - Workflow extraction.
 - Department/workflow inventory.
 - Roadmap draft generation.
+- Data export page: full portable archive downloadable at any time.
+- Onboarding completeness dashboard: shows what each data source unlocks.
+- One lightweight integration (Google Workspace or Slack) to prove the integration architecture before Phase 4.
 
 ### Phase 3: Guided Interviews
+
+Ownership stage introduced: Stage 2 (Bring Your Own Storage for documents and recordings).
 
 Deliverables:
 
 - Role-based interview flows.
-- Employee invite links.
-- Adaptive AI questions.
+- Employee invite links (magic link, no account required, dedicated simplified experience).
+- Adaptive AI questions using previous client context.
 - Interview summaries.
 - Missing info detection.
 - Workflow confidence scoring.
+- BYOS storage option available for all organizations.
 
 ### Phase 4: Integrations
+
+Ownership stage introduced: Stage 3 (Bring Your Own AI Keys, provider abstraction live).
 
 Deliverables:
 
@@ -690,27 +873,37 @@ Deliverables:
 - QuickBooks or Xero.
 - Normalized integration object model.
 - Integration-derived workflow hints.
+- Integration Readiness step in onboarding: IT admin guidance, permission request generator.
+- Webhook ingestion with idempotency and Inngest retry handling.
+- Client AI key configuration in workspace settings.
 
 ### Phase 5: Workflow Capture
 
 Deliverables:
 
 - Browser-based workflow recording.
+- Chrome extension (MV3, with capability validation done in Phase 0 planning).
+- Graceful fallback for managed/restricted environments.
 - Screen share capture.
 - Session transcription.
 - OCR/screen summary.
 - Clarifying questions.
 - Workflow reconstruction.
+- Raw recording retention controls (90-day default, configurable).
 
 ### Phase 6: Automation Roadmap And Consultant Console
 
+Ownership stage introduced: Stage 4 (BYOC infrastructure-as-code deployment option for enterprise clients).
+
 Deliverables:
 
-- Opportunity scoring.
+- Opportunity scoring engine.
 - Roadmap builder.
 - Consultant review/edit interface.
 - Client-ready report.
 - Exportable implementation plan.
+- Terraform/Pulumi package for BYOC deployment.
+- License and update mechanism for self-hosted instances.
 
 ### Phase 7: Automation Deployment Layer
 
@@ -718,8 +911,17 @@ Deliverables:
 
 - Human-approved automation specs.
 - n8n/Make/Zapier integration.
+- DeSaaS API for automation tools to call back into.
 - Custom workflow runner for DeSaaS-owned automations.
 - Client AI assistant connected to the process graph.
+
+### Phase 7+: Open-Source Core Consideration
+
+Ownership stage introduced: Stage 5 (Fully Sovereign).
+
+Evaluate open-sourcing the core data layer and process graph under MIT or Apache 2.0. The proprietary AI orchestration, automation pattern library, and roadmap generation engine remain commercial. Enterprise clients can run fully air-gapped with a self-hosted LLM for document and session processing. DeSaaS monetizes through software licenses, managed BYOC services, and the intelligence layer.
+
+---
 
 ## Initial AI Schemas
 
@@ -763,9 +965,31 @@ Deliverables:
   "tools": ["string"],
   "manualSteps": ["string"],
   "automationPotential": "low | medium | high",
-  "confidence": 0
+  "confidence": 0,
+  "promptVersion": "string"
 }
 ```
+
+### Automation Opportunity
+
+```json
+{
+  "workflowId": "string",
+  "category": "quick_win | needs_cleanup | human_in_loop | full_automation | ai_assistant | custom_app | not_recommended",
+  "frequencyPerMonth": 0,
+  "estimatedMinutesSavedPerMonth": 0,
+  "implementationComplexity": "low | medium | high",
+  "requiredIntegrations": ["string"],
+  "requiredHumanApprovals": ["string"],
+  "risks": ["string"],
+  "confidence": 0,
+  "sourceEvidence": [
+    { "sourceType": "document | interview_answer | integration_event | workflow_recording", "sourceId": "string" }
+  ]
+}
+```
+
+---
 
 ## First Website UX Direction
 
@@ -792,7 +1016,9 @@ Design feel:
 - Intelligent.
 - High-trust.
 - Clear.
-- More “AI operations analyst” than “chatbot.”
+- More "AI operations analyst" than "chatbot."
+
+---
 
 ## MVP Build Recommendation
 
@@ -807,7 +1033,9 @@ The first build should include:
 - A saved prospect record.
 - A simple admin page for DeSaaS to review prospects.
 
-This creates an immediate sales asset and the foundation for the larger onboarding platform.
+The backend must be set up with the full multi-tenant schema and RLS from the first migration, even though Phase 1 only has one tenant (DeSaaS itself as the host). Getting this right at the start is far cheaper than fixing it under a live product.
+
+---
 
 ## Key Product Principle
 
@@ -818,3 +1046,9 @@ Every interaction should either:
 - Move both sides closer to a scoped automation roadmap.
 
 If an interaction does none of those, it should be removed.
+
+## Key Architecture Principle
+
+DeSaaS sells intelligence, not custody.
+
+At every stage of the build, ask: if this client wanted to own this completely, could they? If the answer is no, fix the architecture before shipping the feature.

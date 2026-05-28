@@ -556,12 +556,12 @@ function renderOnboardingPreview() {
       <div class="onboarding-copy">
         <span class="eyebrow">AI-powered onboarding</span>
         <h1>Let DeSaaS start learning the business before the first call.</h1>
-        <p class="lead">This preview captures the client&apos;s goals, tools, workflow friction, and first automation signals while they are still on the website. After signup, the same context becomes the seed of their private DeSaaS workspace.</p>
+        <p class="lead">This preview captures the client&apos;s goals, tools, workflow friction, and first automation signals while they are still on the website. After signup, the same context becomes the seed of a private workspace designed around client-owned data.</p>
         <div class="onboarding-proof">
           <span>Website intake</span>
           <span>SOP upload</span>
           <span>Tool discovery</span>
-          <span>Workflow map</span>
+          <span>Client sovereignty</span>
         </div>
       </div>
 
@@ -653,12 +653,12 @@ function renderOnboardingPreview() {
 
         <div class="upload-strip">
           <div>
-            <strong>SOP upload starts here</strong>
-            <p>In the full build, this accepts SOPs, spreadsheets, templates, process notes, and recorded walkthroughs.</p>
+            <strong>Minimum viable onboarding</strong>
+            <p>Connect one tool, upload one document, and answer a five-question interview. More inputs improve the roadmap, but this is enough to start.</p>
           </div>
           <label class="upload-button">
             <input type="file" multiple disabled />
-            Upload placeholder
+            SOP placeholder
           </label>
         </div>
       </div>
@@ -671,16 +671,16 @@ function renderOnboardingPreview() {
             <span class="eyebrow">After signup</span>
             <h2>The website profile becomes the first layer of the client workspace.</h2>
           </div>
-          <p>The deeper onboarding system adds documents, integrations, employee interviews, screen capture, consultant review, and a prioritized automation roadmap.</p>
+          <p>The deeper onboarding system adds documents, integrations, employee interviews, screen capture, consultant review, exportability, audit logs, and a prioritized automation roadmap.</p>
         </div>
         <div class="onboarding-timeline">
           ${[
-            ["01", "Seed profile", "Merge website behavior, intake answers, tools, and stated goals into a prospect record."],
-            ["02", "Upload documents", "Parse SOPs, templates, spreadsheets, and training docs into workflow candidates."],
-            ["03", "Connect tools", "Use read-only discovery for CRM, finance, project, support, and communication systems."],
-            ["04", "Interview employees", "Ask role-specific questions based on what DeSaaS has already learned."],
-            ["05", "Watch workflows", "Capture real work sessions and ask clarifying questions in context."],
-            ["06", "Prioritize automation", "Score opportunities by frequency, impact, risk, readiness, and implementation effort."]
+            ["01", "Stage 0: hosted start", "Merge website behavior, intake answers, tools, and stated goals into a prospect record."],
+            ["02", "Stage 1: transparent data", "Show the client what DeSaaS knows, surface the audit log, and make export part of the workspace."],
+            ["03", "Integration readiness", "Tell the onboarding owner which tools need IT admin approval and generate the request they can forward."],
+            ["04", "Employee interviews", "Use magic links and role-specific questions without forcing every employee into the admin product."],
+            ["05", "Graceful capture", "Capture real work when possible; fall back to meeting recorder or manual workflow builder when devices are locked down."],
+            ["06", "Sovereign roadmap", "Score opportunities by impact and readiness while preserving the path to BYOS, BYO AI keys, and BYOC."]
           ].map(([stepNumber, title, body]) => `<div class="timeline-step"><span>${stepNumber}</span><h3>${title}</h3><p>${body}</p></div>`).join("")}
         </div>
       </div>
@@ -689,8 +689,8 @@ function renderOnboardingPreview() {
     <section class="section final-band">
       <div class="container">
         <span class="eyebrow">Preview path</span>
-        <h2>Next build: persist this profile and show it to DeSaaS internally.</h2>
-        <p class="lead">The first production slice should save this intake, show an internal prospect view, and generate a private readiness summary before any client workspace is created.</p>
+        <h2>Next build: persist this profile on a multi-tenant foundation.</h2>
+        <p class="lead">The first production slice should save this intake, enforce tenant isolation from the first migration, show the prospect record internally, and generate a private readiness summary before any client workspace is created.</p>
         <div class="actions">
           <a class="button primary" href="/book-audit">Book a SaaS Audit</a>
           <a class="button secondary" href="/calculator">Open calculator</a>
