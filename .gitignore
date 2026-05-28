@@ -1,1 +1,5 @@
 .vercel
+.claude
+node_modules
+services/*/node_modules
+*.log

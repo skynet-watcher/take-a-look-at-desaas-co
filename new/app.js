@@ -19,6 +19,14 @@ const pageMeta = {
     title: "DeSaaS Calculator | Estimate Your SaaS Savings Opportunity",
     description: "Use the DeSaaS Calculator to see where you could save money, reduce clutter, and create more capacity in Month 1. A conservative directional model designed to start a better conversation.",
   },
+  "/onboarding": {
+    title: "DeSaaS AI Onboarding | Start Your Operations Blueprint",
+    description: "Start DeSaaS onboarding with an AI-guided intake that captures goals, tools, bottlenecks, and first workflow opportunities before the full workspace begins.",
+  },
+  "/opportunity": {
+    title: "DeSaaS | Build The Operating Advantage Inside Your Workflows",
+    description: "A strategic DeSaaS preview focused on opportunity cost, AI-ready operations, owned workflows, and the competitive advantage of building around how your company actually works.",
+  },
   "/book-audit": {
     title: "Book a SaaS Audit | DeSaaS",
     description: "Share a little context and DeSaaS will identify the first practical place to simplify your software stack — from spend and overlap to workflow friction and renewal timing.",
@@ -48,6 +56,8 @@ const routes = {
   "/use-cases": renderUseCases,
   "/insights": renderInsights,
   "/calculator": renderCalculatorPage,
+  "/onboarding": renderOnboardingPreview,
+  "/opportunity": renderOpportunityHome,
   "/book-audit": renderBookAudit,
 };
 
@@ -168,6 +178,7 @@ function header() {
     ["/how-it-works", "How It Works"],
     ["/use-cases", "Use Cases"],
     ["/insights", "Insights"],
+    ["/onboarding", "AI Onboarding"],
     ["/calculator", "Calculator"],
     ["/book-audit", "Book Audit"],
   ];
@@ -182,7 +193,7 @@ function header() {
           ${links.map(([href, label]) => `<a href="${href}" ${current === href ? 'aria-current="page"' : ""}>${label}</a>`).join("")}
         </div>
         <div class="nav-actions">
-          <a class="button primary" href="/calculator">Find your first opportunity</a>
+          <a class="button primary" href="/onboarding">Start onboarding</a>
           <button class="menu-button" type="button" aria-label="Open menu">☰</button>
         </div>
       </nav>
@@ -204,6 +215,7 @@ function footer() {
           <a href="/how-it-works">How It Works</a>
           <a href="/use-cases">Use Cases</a>
           <a href="/insights">Insights</a>
+          <a href="/onboarding">AI Onboarding</a>
           <a href="/calculator">Calculator</a>
           <a href="/book-audit">Book Audit</a>
           <a href="/privacy">Privacy</a>
@@ -221,7 +233,7 @@ function pageShell(content) {
 function ctaButtons() {
   return html`
     <div class="actions">
-      <a class="button primary" href="/calculator">Find your first DeSaaS opportunity</a>
+      <a class="button primary" href="/onboarding">Start AI onboarding</a>
       <a class="button secondary" href="/book-audit">Book a SaaS Audit</a>
     </div>
   `;
@@ -368,7 +380,7 @@ function renderNewHome() {
     <section class="container hero">
       <div>
         <h1>Own your tools.</h1>
-        <p class="lead">SaaS fees are just the start. The hidden cost is the complexity your team has to navigate every day.</p>
+        <p class="lead">SaaS fees are just the start. The real cost is what never gets built while your team works around the complexity.</p>
         <p class="outcome-line">Keep what works. Own the process around it.</p>
         ${previewCtas()}
         <p class="microcopy">Start with the tools, connections, and workflows creating the most operational drag.</p>
@@ -376,11 +388,170 @@ function renderNewHome() {
       ${pipelineAnimation()}
     </section>
     ${hiddenCostSection()}
+    ${opportunityCostSection()}
     ${connectionFrictionSection()}
     ${ownedSurfaceSection()}
-    ${aiReadySection()}
+    ${aiLegibilitySection()}
     ${previewConversionSection()}
   `);
+}
+
+function renderOpportunityHome() {
+  return pageShell(html`
+    <section class="container opportunity-hero">
+      <div class="opportunity-copy">
+        <span class="eyebrow">Strategic DeSaaS preview</span>
+        <h1>Build the operating advantage hiding inside your workflows.</h1>
+        <p class="lead">DeSaaS helps companies reduce software waste, simplify the stack, and turn repeated work into owned, AI-ready systems that compound over time.</p>
+        <p class="outcome-line">Your competitors cannot subscribe to the way your company works.</p>
+        <div class="actions">
+          <a class="button primary" href="/onboarding">Start AI onboarding</a>
+          <a class="button secondary" href="/calculator">Estimate the drag</a>
+        </div>
+      </div>
+      <div class="advantage-board" aria-label="DeSaaS strategic advantage map">
+        <div class="advantage-core">
+          <span class="brand-mark">De</span>
+          <strong>Owned operating layer</strong>
+          <small>workflow, data, AI assist, review</small>
+        </div>
+        <div class="advantage-node node-speed"><strong>Speed</strong><span>shorter handoffs</span></div>
+        <div class="advantage-node node-context"><strong>Context</strong><span>cleaner decisions</span></div>
+        <div class="advantage-node node-ai"><strong>AI leverage</strong><span>usable workflows</span></div>
+        <div class="advantage-node node-memory"><strong>Memory</strong><span>knowledge compounds</span></div>
+        <div class="advantage-node node-control"><strong>Control</strong><span>less vendor drift</span></div>
+        <div class="advantage-orbit orbit-a"></div>
+        <div class="advantage-orbit orbit-b"></div>
+      </div>
+    </section>
+    ${inefficiencyCostSection()}
+    ${opportunityCostSection()}
+    ${competitiveRealitySection()}
+    ${strategicDeSaaSSection()}
+    ${aiLegibilitySection()}
+    ${opportunityCtaSection()}
+  `);
+}
+
+function inefficiencyCostSection() {
+  const costs = [
+    ["Invoice cost", "Seats, renewals, overlapping tools, and features your team never needed."],
+    ["Navigation cost", "Time spent finding the right dashboard, record, owner, or latest version of the truth."],
+    ["Movement cost", "Exports, copy/paste, spreadsheet rollups, and repeated reconciliation between systems."],
+    ["Coordination cost", "Approvals, handoffs, and follow-ups that depend on memory instead of the workflow itself."]
+  ];
+  return html`
+    <section class="section">
+      <div class="container section-header">
+        <div>
+          <span class="eyebrow">The visible cost</span>
+          <h2>The invoice is only the part you can see.</h2>
+        </div>
+        <p>SaaS sprawl creates obvious spend, but the daily drag is usually larger: duplicated data, unclear ownership, brittle handoffs, and teams working around the tools they bought to help them.</p>
+      </div>
+      <div class="container grid four">${costs.map(card).join("")}</div>
+    </section>
+  `;
+}
+
+function opportunityCostSection() {
+  const upside = [
+    ["Decision speed", "Cleaner workflows and fewer handoffs let leaders see what is happening sooner."],
+    ["AI leverage", "Structured work creates safer places for AI to summarize, route, draft, extract, and reconcile."],
+    ["Operating memory", "Repeated work becomes a system the whole team can improve, not a habit trapped in one employee's head."],
+    ["Adaptability", "Owned workflows can change as the business changes instead of waiting on a vendor roadmap."]
+  ];
+  return html`
+    <section class="section opportunity-band">
+      <div class="container opportunity-split">
+        <div>
+          <span class="eyebrow">The opportunity cost</span>
+          <h2>Every month your workflows stay scattered, the advantage gets postponed.</h2>
+          <p class="lead">The companies going all in are not just saving money. They are shortening handoffs, improving decision speed, making AI safer to use, and turning operational knowledge into systems the whole team can build on.</p>
+        </div>
+        <div class="opportunity-stack">
+          ${upside.map(([title, body], index) => `<div class="advantage-card" style="--i:${index}"><h3>${title}</h3><p>${body}</p></div>`).join("")}
+        </div>
+      </div>
+    </section>
+  `;
+}
+
+function competitiveRealitySection() {
+  return html`
+    <section class="section">
+      <div class="container competitive-panel">
+        <span class="eyebrow">Competitive reality</span>
+        <h2>You are not just competing against better tools. You are competing against better operating systems.</h2>
+        <p class="lead">A competitor using the same SaaS stack is one thing. A competitor with owned workflows, clean context, and practical AI inside daily operations is playing a different game.</p>
+        <div class="competitive-rows">
+          <div><span>Generic SaaS</span><strong>Everyone can buy it</strong></div>
+          <div><span>Owned workflow</span><strong>Only your company can build it</strong></div>
+          <div><span>AI beside the work</span><strong>Another destination</strong></div>
+          <div><span>AI inside the workflow</span><strong>Compounding capability</strong></div>
+        </div>
+      </div>
+    </section>
+  `;
+}
+
+function strategicDeSaaSSection() {
+  const steps = [
+    ["Map the operating reality", "Find where the official process differs from how work actually gets done."],
+    ["Keep the tools that earn their place", "DeSaaS is not a rebuild-everything philosophy. Essential systems stay, but their role becomes clear."],
+    ["Own what makes the business distinct", "Build the focused operating layer around the workflows that drive speed, consistency, and customer experience."],
+    ["Compound from the first workflow", "Each owned workflow creates cleaner context for the next automation, report, and AI assistant."]
+  ];
+  return html`
+    <section class="section security-band">
+      <div class="container">
+        <div class="section-header">
+          <div>
+            <span class="eyebrow">What DeSaaS builds</span>
+            <h2>Not more software. A clearer operating layer.</h2>
+          </div>
+          <p>The goal is not fewer tools at all costs. The goal is fewer dependencies with better fit, clearer ownership, and workflows the business can actually evolve.</p>
+        </div>
+        <div class="process-list">${steps.map(([title, body]) => `<div class="process-item"><div><h3>${title}</h3><p>${body}</p></div></div>`).join("")}</div>
+      </div>
+    </section>
+  `;
+}
+
+function aiLegibilitySection() {
+  const cards = [
+    ["Clean inputs", "AI can only help when the system knows which data matters and where it came from."],
+    ["Clear permissions", "Practical AI needs boundaries: who can see, approve, change, and export what."],
+    ["Narrow jobs", "The safest first AI workflows summarize, route, draft, extract, reconcile, and escalate."],
+  ];
+  return html`
+    <section class="section">
+      <div class="container ai-panel">
+        <div>
+          <span class="eyebrow">AI-ready operations</span>
+          <h2>AI becomes useful when your operations are legible.</h2>
+          <p class="lead">The best AI systems are not magic layers on top of chaos. They need clean context, structured decisions, and human review points. DeSaaS makes the business legible enough for AI to help.</p>
+        </div>
+        <div class="grid three">${cards.map(card).join("")}</div>
+      </div>
+    </section>
+  `;
+}
+
+function opportunityCtaSection() {
+  return html`
+    <section class="section final-band">
+      <div class="container">
+        <span class="eyebrow">Start with one workflow</span>
+        <h2>Find the first workflow that can become an advantage.</h2>
+        <p class="lead">We will map the cost, friction, and strategic upside in your current stack, then show where DeSaaS should start.</p>
+        <div class="actions">
+          <a class="button primary" href="/onboarding">Start AI onboarding</a>
+          <a class="button secondary" href="/book-audit">Book a SaaS Audit</a>
+        </div>
+      </div>
+    </section>
+  `;
 }
 
 function hiddenCostSection() {
@@ -498,13 +669,217 @@ function previewConversionSection() {
   return html`
     <section class="section final-band">
       <div class="container">
-        <span class="eyebrow">Ready to start?</span>
-        <h2>Find the first workflow worth owning.</h2>
-        <p class="lead">Book a free audit and DeSaaS will map your stack, find the first opportunity, and show you exactly where to start.</p>
+        <span class="eyebrow">Start with one workflow</span>
+        <h2>Find the first workflow that can become an advantage.</h2>
+        <p class="lead">We will map the cost, friction, and strategic upside in your current stack, then show where DeSaaS should start.</p>
         ${previewCtas()}
       </div>
     </section>
   `;
+}
+
+function renderOnboardingPreview() {
+  const tools = [
+    "Google Workspace",
+    "Microsoft 365",
+    "Slack",
+    "Teams",
+    "HubSpot",
+    "Pipedrive",
+    "QuickBooks",
+    "Xero",
+    "ClickUp",
+    "Asana",
+    "Airtable",
+    "Notion",
+    "Zendesk",
+    "Shopify"
+  ];
+  const bottlenecks = [
+    "Manual data entry",
+    "Sales handoffs",
+    "Client onboarding",
+    "Reporting",
+    "Support triage",
+    "Invoice follow-up",
+    "SOP gaps",
+    "Project coordination"
+  ];
+  const workflows = [
+    "Lead intake",
+    "Proposal",
+    "New customer kickoff",
+    "Order fulfillment",
+    "Support request",
+    "Invoice and collections",
+    "Weekly reporting"
+  ];
+
+  return pageShell(html`
+    <section class="container onboarding-hero">
+      <div class="onboarding-copy">
+        <span class="eyebrow">AI-powered onboarding</span>
+        <h1>Let DeSaaS start learning the business before the first call.</h1>
+        <p class="lead">This preview captures the client&apos;s goals, tools, workflow friction, and first automation signals while they are still on the website. After signup, the same context becomes the seed of a private workspace designed around client-owned data.</p>
+        <div class="onboarding-proof">
+          <span>Website intake</span>
+          <span>SOP upload</span>
+          <span>Tool discovery</span>
+          <span>Client sovereignty</span>
+        </div>
+      </div>
+
+      <div class="onboarding-console" data-onboarding-console>
+        <div class="console-header">
+          <div>
+            <strong>DeSaaS intake assistant</strong>
+            <p>Live operations profile</p>
+          </div>
+          <span class="console-pill">Preview</span>
+        </div>
+
+        <div class="console-grid">
+          <form class="intake-form" data-onboarding-form>
+            <label>
+              <span>Company</span>
+              <input data-onboarding-field="company" name="company" placeholder="Acme Services" autocomplete="organization" />
+            </label>
+            <label>
+              <span>Work email</span>
+              <input data-onboarding-field="email" name="email" type="email" placeholder="name@company.com" autocomplete="email" />
+            </label>
+            <label>
+              <span>Company website</span>
+              <input data-onboarding-field="website" name="website" placeholder="company.com" autocomplete="url" />
+            </label>
+            <label>
+              <span>Team size</span>
+              <select data-onboarding-field="teamSize" name="teamSize">
+                <option value="">Select</option>
+                <option>1-10</option>
+                <option>11-25</option>
+                <option>26-75</option>
+                <option>76-200</option>
+                <option>200+</option>
+              </select>
+            </label>
+            <label class="wide">
+              <span>What should automation improve first?</span>
+              <textarea data-onboarding-field="outcome" name="outcome" placeholder="Reduce admin time, make client onboarding consistent, and stop copying data between tools."></textarea>
+            </label>
+          </form>
+
+          <aside class="learning-panel">
+            <div class="skeleton-meta">
+              <span class="eyebrow">Operations skeleton</span>
+              <span class="confidence-badge"><strong data-readiness-score>22</strong>%</span>
+            </div>
+            <div class="confidence-bar-wrap">
+              <div class="confidence-bar"><div class="confidence-fill" data-confidence-fill style="width:22%"></div></div>
+            </div>
+            <div class="skeleton-nodes" data-skeleton-nodes aria-live="polite">
+              <p class="skeleton-empty">Fill in your company details above and nodes will appear here.</p>
+            </div>
+            <p class="assistant-note" data-assistant-note>Tell us who you are and DeSaaS will start building your operations skeleton.</p>
+          </aside>
+        </div>
+
+        <div class="selector-row" data-toggle-group="tools">
+          <div class="selector-heading"><strong>Tools in the stack</strong><span>Pick what they already use</span></div>
+          <div class="chip-grid">${tools.map(item => `<button class="chip" type="button" data-toggle-value="${item}">${item}</button>`).join("")}</div>
+        </div>
+
+        <div class="selector-row" data-toggle-group="bottlenecks">
+          <div class="selector-heading"><strong>Where work gets stuck</strong><span>Signals for the first discovery sprint</span></div>
+          <div class="chip-grid">${bottlenecks.map(item => `<button class="chip" type="button" data-toggle-value="${item}">${item}</button>`).join("")}</div>
+        </div>
+
+        <div class="selector-row" data-toggle-group="workflows">
+          <div class="selector-heading"><strong>First workflows to map</strong><span>What DeSaaS should watch and ask about</span></div>
+          <div class="chip-grid">${workflows.map(item => `<button class="chip" type="button" data-toggle-value="${item}">${item}</button>`).join("")}</div>
+        </div>
+
+        <div class="snapshot-panel">
+          <div>
+            <span class="eyebrow">Readiness snapshot</span>
+            <h2>First automation signals</h2>
+            <p data-snapshot-summary>DeSaaS is ready to build a preliminary profile from the client&apos;s website intake, then continue with SOP upload, tool connections, employee interviews, and workflow capture after signup.</p>
+          </div>
+          <div class="snapshot-list">
+            <h3>Likely quick wins</h3>
+            <ul data-quick-wins>
+              <li>Upload SOPs and compare documented work against actual work.</li>
+              <li>Map one revenue or onboarding workflow end to end.</li>
+              <li>Connect the first source-of-truth system in read-only mode.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="honest-ask" data-honest-ask>
+          <div class="ask-row">
+            <div class="ask-confidence">
+              <span class="eyebrow">Skeleton confidence</span>
+              <div class="ask-score"><strong data-ask-readiness>22</strong><span>%</span></div>
+            </div>
+            <div class="ask-detail">
+              <div data-ask-needed-wrap>
+                <h3>To reach 80%</h3>
+                <ul data-ask-needed>
+                  <li>Select at least one tool</li>
+                  <li>Describe your main goal</li>
+                  <li>Name one core workflow</li>
+                </ul>
+              </div>
+              <div data-ask-unlocks-wrap class="ask-unlocks">
+                <h3>That unlocks</h3>
+                <ul data-ask-unlocks>
+                  <li>Tool-based workflow hints</li>
+                  <li>Full workflow map</li>
+                  <li>Three automation estimates</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <button class="button primary full-width" data-start-onboarding>Start my private onboarding</button>
+          <p class="ask-note">No account needed to start. Your skeleton is saved to this browser session.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section security-band">
+      <div class="container">
+        <div class="section-header">
+          <div>
+            <span class="eyebrow">After signup</span>
+            <h2>The website profile becomes the first layer of the client workspace.</h2>
+          </div>
+          <p>The deeper onboarding system adds documents, integrations, employee interviews, screen capture, consultant review, exportability, audit logs, and a prioritized automation roadmap.</p>
+        </div>
+        <div class="onboarding-timeline">
+          ${[
+            ["01", "Stage 0: hosted start", "Merge website behavior, intake answers, tools, and stated goals into a prospect record."],
+            ["02", "Stage 1: transparent data", "Show the client what DeSaaS knows, surface the audit log, and make export part of the workspace."],
+            ["03", "Integration readiness", "Tell the onboarding owner which tools need IT admin approval and generate the request they can forward."],
+            ["04", "Employee interviews", "Use magic links and role-specific questions without forcing every employee into the admin product."],
+            ["05", "Graceful capture", "Capture real work when possible; fall back to meeting recorder or manual workflow builder when devices are locked down."],
+            ["06", "Sovereign roadmap", "Score opportunities by impact and readiness while preserving the path to BYOS, BYO AI keys, and BYOC."]
+          ].map(([stepNumber, title, body]) => `<div class="timeline-step"><span>${stepNumber}</span><h3>${title}</h3><p>${body}</p></div>`).join("")}
+        </div>
+      </div>
+    </section>
+
+    <section class="section final-band">
+      <div class="container">
+        <span class="eyebrow">Preview path</span>
+        <h2>Next build: persist this profile on a multi-tenant foundation.</h2>
+        <p class="lead">The first production slice should save this intake, enforce tenant isolation from the first migration, show the prospect record internally, and generate a private readiness summary before any client workspace is created.</p>
+        <div class="actions">
+          <a class="button primary" href="/book-audit">Book a SaaS Audit</a>
+          <a class="button secondary" href="/calculator">Open calculator</a>
+        </div>
+      </div>
+    </section>
+  `);
 }
 
 function problemSection() {
@@ -890,6 +1265,255 @@ function wireCalculator() {
   update();
 }
 
+function wireOnboardingPreview() {
+  const consoleEl = document.querySelector("[data-onboarding-console]");
+  if (!consoleEl) return;
+
+  const storageKey = "desaas:onboarding-preview";
+  const stored = safeJson(localStorage.getItem(storageKey)) || {};
+  const state = {
+    company: "",
+    email: "",
+    website: "",
+    teamSize: "",
+    outcome: "",
+    tools: [],
+    bottlenecks: [],
+    workflows: [],
+    ...stored
+  };
+
+  consoleEl.querySelectorAll("[data-onboarding-field]").forEach((field) => {
+    const key = field.dataset.onboardingField;
+    field.value = state[key] || "";
+    field.addEventListener("input", () => {
+      state[key] = field.value;
+      syncOnboarding();
+    });
+  });
+
+  consoleEl.querySelectorAll("[data-toggle-group]").forEach((group) => {
+    const key = group.dataset.toggleGroup;
+    group.querySelectorAll("[data-toggle-value]").forEach((button) => {
+      const value = button.dataset.toggleValue;
+      button.classList.toggle("selected", state[key]?.includes(value));
+      button.addEventListener("click", () => {
+        const values = new Set(state[key] || []);
+        values.has(value) ? values.delete(value) : values.add(value);
+        state[key] = [...values];
+        button.classList.toggle("selected", values.has(value));
+        syncOnboarding();
+      });
+    });
+  });
+
+  function syncOnboarding() {
+    const readiness = calculateOnboardingReadiness(state);
+    const quickWins = onboardingQuickWins(state);
+    const nodes = buildSkeletonNodes(state);
+    const ask = buildHonestAsk(state, readiness);
+
+    setText("[data-readiness-score]", readiness);
+    setText("[data-ask-readiness]", readiness);
+    setText("[data-assistant-note]", onboardingAssistantNote(state, readiness));
+    setText("[data-snapshot-summary]", onboardingSnapshotSummary(state, readiness));
+
+    const fillEl = consoleEl.querySelector("[data-confidence-fill]");
+    if (fillEl) fillEl.style.width = `${readiness}%`;
+
+    const nodesEl = consoleEl.querySelector("[data-skeleton-nodes]");
+    if (nodesEl) {
+      if (nodes.length === 0) {
+        nodesEl.innerHTML = `<p class="skeleton-empty">Fill in your company details above and nodes will appear here.</p>`;
+      } else {
+        nodesEl.innerHTML = nodes.map(renderSkeletonNode).join("");
+      }
+    }
+
+    const quickWinList = consoleEl.querySelector("[data-quick-wins]");
+    if (quickWinList) {
+      quickWinList.innerHTML = quickWins.map((win) => `<li>${escapeHtmlInline(win)}</li>`).join("");
+    }
+
+    const neededList = consoleEl.querySelector("[data-ask-needed]");
+    const unlocksList = consoleEl.querySelector("[data-ask-unlocks]");
+    if (neededList) neededList.innerHTML = ask.needed.map((n) => `<li>${escapeHtmlInline(n)}</li>`).join("");
+    if (unlocksList) unlocksList.innerHTML = ask.unlocks.map((u) => `<li>${escapeHtmlInline(u)}</li>`).join("");
+
+    const neededWrap = consoleEl.querySelector("[data-ask-needed-wrap]");
+    if (neededWrap) neededWrap.style.display = ask.needed.length ? "" : "none";
+
+    consoleEl.style.setProperty("--readiness", readiness);
+    localStorage.setItem(storageKey, JSON.stringify(state));
+  }
+
+  function setText(selector, value) {
+    const node = consoleEl.querySelector(selector);
+    if (node) node.textContent = value;
+  }
+
+  syncOnboarding();
+}
+
+function buildSkeletonNodes(state) {
+  const nodes = [];
+  if (state.company) {
+    nodes.push({ id: "org", label: state.company, type: "Organization", nodeState: "confirmed", source: "entered by you" });
+  }
+  if (state.website) {
+    nodes.push({ id: "web", label: state.website, type: "Web presence", nodeState: "inferred", source: "website scan" });
+  }
+  const toolNodes = {
+    "HubSpot": "CRM · sales pipeline",
+    "Pipedrive": "CRM · sales pipeline",
+    "Salesforce": "CRM · sales pipeline",
+    "QuickBooks": "Finance · invoicing",
+    "Xero": "Finance · invoicing",
+    "Zendesk": "Support workflow",
+    "Slack": "Team communications",
+    "Teams": "Team communications",
+    "Google Workspace": "Docs · email · calendar",
+    "Microsoft 365": "Docs · email · calendar",
+    "ClickUp": "Project management",
+    "Asana": "Project management",
+    "Airtable": "Data · operations",
+    "Notion": "Docs · knowledge base",
+    "Shopify": "E-commerce · orders",
+  };
+  (state.tools || []).forEach((tool) => {
+    nodes.push({ id: `tool-${tool}`, label: tool, type: toolNodes[tool] || "Tool", nodeState: "inferred", source: "tool selection" });
+  });
+  const bottleneckNodes = {
+    "Manual data entry": "Data entry workflow",
+    "Sales handoffs": "Sales handoff workflow",
+    "Client onboarding": "Client onboarding workflow",
+    "Reporting": "Reporting workflow",
+    "Support triage": "Support triage workflow",
+    "Invoice follow-up": "Collections workflow",
+    "SOP gaps": "Process documentation",
+    "Project coordination": "Project handoff workflow",
+  };
+  (state.bottlenecks || []).forEach((b) => {
+    const label = bottleneckNodes[b];
+    if (label && !nodes.find((n) => n.label === label)) {
+      nodes.push({ id: `bn-${b}`, label, type: "Workflow", nodeState: "inferred", source: `bottleneck: ${b.toLowerCase()}` });
+    }
+  });
+  (state.workflows || []).forEach((w) => {
+    const existing = nodes.find((n) => n.label.toLowerCase().includes(w.toLowerCase().split(" ")[0]));
+    if (existing) {
+      existing.nodeState = "confirmed";
+    } else {
+      nodes.push({ id: `wf-${w}`, label: w, type: "Workflow", nodeState: "confirmed", source: "named by you" });
+    }
+  });
+  return nodes;
+}
+
+function renderSkeletonNode({ label, type, nodeState, source }) {
+  const dot = nodeState === "confirmed" ? "●" : "○";
+  const cls = nodeState === "confirmed" ? "node-confirmed" : "node-inferred";
+  return `<div class="skeleton-node ${cls}">
+    <span class="node-dot" aria-hidden="true">${dot}</span>
+    <div class="node-body">
+      <strong>${escapeHtmlInline(label)}</strong>
+      <span class="node-meta">${escapeHtmlInline(type)} · ${escapeHtmlInline(source)}</span>
+    </div>
+  </div>`;
+}
+
+function buildHonestAsk(state, readiness) {
+  if (readiness >= 80) {
+    return {
+      needed: [],
+      unlocks: ["private workspace with your skeleton pre-loaded", "SOP upload and document parsing", "tool connections and integration discovery", "role-based employee interviews"],
+    };
+  }
+  const needed = [];
+  const unlocks = [];
+  if (!(state.tools || []).length) { needed.push("select at least one tool (2 min)"); unlocks.push("tool-based workflow hints"); }
+  if (!state.outcome) { needed.push("describe your main goal (1 min)"); unlocks.push("targeted automation path"); }
+  if (!(state.workflows || []).length) { needed.push("name one core workflow (1 min)"); unlocks.push("workflow-specific quick wins"); }
+  if (!state.website) { needed.push("share your website URL (30 sec)"); unlocks.push("business context and industry signals"); }
+  if (!needed.length && readiness >= 60) {
+    return {
+      needed: [],
+      unlocks: ["private workspace with your skeleton pre-loaded", "SOP upload and document parsing", "tool connections and integration discovery"],
+    };
+  }
+  if (!unlocks.length) unlocks.push("full workflow map", "three automation estimates");
+  return { needed, unlocks };
+}
+
+function safeJson(value) {
+  try {
+    return value ? JSON.parse(value) : null;
+  } catch {
+    return null;
+  }
+}
+
+function calculateOnboardingReadiness(state) {
+  let score = 22;
+  if (state.company) score += 8;
+  if (state.email) score += 6;
+  if (state.website) score += 8;
+  if (state.teamSize) score += 6;
+  if (state.outcome) score += 12;
+  score += Math.min((state.tools || []).length * 4, 18);
+  score += Math.min((state.bottlenecks || []).length * 4, 16);
+  score += Math.min((state.workflows || []).length * 4, 12);
+  return Math.min(score, 100);
+}
+
+function onboardingAssistantNote(state, readiness) {
+  if (readiness >= 76) return "Enough signal for a private workspace, SOP upload, and first workflow interview.";
+  if ((state.tools || []).length >= 3) return "The tool map is forming. Add bottlenecks and one workflow to prioritize the first automation path.";
+  if (state.company) return "Good start. DeSaaS can now connect this session to a known company profile.";
+  return "Tell us who you are and DeSaaS will start shaping the first onboarding path.";
+}
+
+function onboardingSnapshotSummary(state, readiness) {
+  const company = state.company || "this company";
+  if (readiness >= 76) {
+    return `${company} is ready for the full onboarding sequence. DeSaaS will map costs, friction, and strategic upside across the stack — then build a prioritised roadmap of workflows that can become owned operating advantages.`;
+  }
+  if ((state.bottlenecks || []).length) {
+    const bns = (state.bottlenecks || []).slice(0, 2).join(" and ");
+    return `${company} is showing early signals around ${bns}. The next step is to map one workflow end to end and identify whether the bottleneck is an efficiency problem, a strategic gap, or both.`;
+  }
+  return "DeSaaS looks for two things in parallel: where the stack is creating drag today, and where fixing it would create a compounding operational advantage. Fill in the details above to start the picture.";
+}
+
+function onboardingQuickWins(state) {
+  const wins = [];
+  const tools = state.tools || [];
+  const bottlenecks = state.bottlenecks || [];
+  if (bottlenecks.includes("Manual data entry")) wins.push("Trace repeated copy/paste paths and score them for automation impact.");
+  if (bottlenecks.includes("Client onboarding")) wins.push("Map the first customer handoff — this is often the highest-ROI workflow to own.");
+  if (bottlenecks.includes("Reporting")) wins.push("Identify reports that could run from source systems instead of spreadsheet rollups.");
+  if (bottlenecks.includes("Sales handoffs")) wins.push("Find where sales-to-delivery context gets lost and quantify the rework cost.");
+  if (tools.includes("HubSpot") || tools.includes("Pipedrive")) wins.push("Review CRM stage changes and handoffs — clean pipeline data is an AI-readiness asset.");
+  if (tools.includes("QuickBooks") || tools.includes("Xero")) wins.push("Trace invoice creation to collections — finance workflows compound quickly when automated.");
+  if (!wins.length) {
+    wins.push("Upload one SOP and compare the documented process against how work actually happens.");
+    wins.push("Map one revenue workflow end to end and identify where the handoffs break down.");
+    wins.push("Connect the first source-of-truth system in read-only mode to see what the data reveals.");
+  }
+  wins.push("Identify one workflow where speed or consistency would create a strategic advantage over the next 12 months.");
+  return wins.slice(0, 4);
+}
+
+function escapeHtmlInline(value) {
+  return String(value ?? "").replace(/[&<>"']/g, (char) => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;"
+  }[char]));
+}
+
 function wireAnimation() {
   const card = document.querySelector(".animation-card");
   if (!card || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
@@ -1061,6 +1685,7 @@ function render() {
   }
   wireMenu();
   wireCalculator();
+  wireOnboardingPreview();
   wireAnimation();
 }
 
